@@ -34,8 +34,8 @@
 
         // Play button: compile with GnuCOBOL and run the resulting executable
         "code-runner.executorMapByFileExtension": {
-          ".cbl": "cd $dir && cobc -x -o $fileNameWithoutExt $fileName && ./$fileNameWithoutExt",
-          ".col": "cd $dir && cobc -x -o $fileNameWithoutExt $fileName && ./$fileNameWithoutExt"
+          ".cbl": "cd $dir && cobc -x -o $fileNameWithoutExt $fileName && ./$fileNameWithoutExt < input.txt | tee output.txt",
+          ".col": "cd $dir && cobc -x -o $fileNameWithoutExt $fileName && ./$fileNameWithoutExt < input.txt | tee output.txt"
         },
         "code-runner.runInTerminal": true
       }
