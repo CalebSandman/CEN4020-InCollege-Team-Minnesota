@@ -1,3 +1,17 @@
+      * ================================================================
+      *                        DEVELOPERS READ THIS
+      *
+      *    To print to console: MOVE "[TEXT]" TO WS_MESSAGE
+      *                         PERFORM SHOW-AND-LOG-SECTION
+      *
+      *    For menu selections READ into WS-MENU-CHOICE
+      *
+      *
+      *
+      *
+      *
+      *
+      * ================================================================
        IDENTIFICATION DIVISION.
        PROGRAM-ID. INCOLLEGE.
 
@@ -13,6 +27,8 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-OUTPUT-FILE-STATUS.
 
+      * Do not remove anything from DATA DIVISION
+      * Only add new variables as needed
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
