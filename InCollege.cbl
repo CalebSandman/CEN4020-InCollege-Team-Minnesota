@@ -56,10 +56,13 @@
        01  WS-CONTINUE-FLAG            PIC X VALUE "Y".
            88  KEEP-RUNNING            VALUE "Y".
 
+       01  WS-EXIT-FLAG                PIC X VALUE "N".
+           88 EXIT-REQUESTED           VALUE "Y".
+
        01  WS-LOGGED-IN-FLAG           PIC X VALUE "N".
            88  IS-LOGGED-IN            VALUE "Y".
 
-       01  WS-MENU-CHOICE           PIC X(1).
+       01  WS-MENU-CHOICE              PIC X(1).
        
       * ---------------------------------------------------------------
       * Login / registration working fields
@@ -102,11 +105,12 @@
                PERFORM WELCOME-SECTION
            END-PERFORM
 
-           MOVE "Y" TO WS-CONTINUE-FLAG
-
-           PERFORM UNTIL NOT KEEP-RUNNING
-               PERFORM MAIN-MENU-SECTION
-           END-PERFORM
+           IF NOT EXIT-REQUESTED
+               MOVE "Y" TO WS-CONTINUE-FLAG
+               PERFORM UNTIL NOT KEEP-RUNNING
+                   PERFORM MAIN-MENU-SECTION
+               END-PERFORM
+           END-IF
 
            PERFORM FINALIZE-SECTION
            STOP RUN.
@@ -163,6 +167,7 @@
                    PERFORM REGISTER-USER-SECTION
                WHEN "3"
                    MOVE "N" TO WS-CONTINUE-FLAG
+                   SET EXIT-REQUESTED TO TRUE
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                    TO WS-MESSAGE
@@ -309,6 +314,8 @@
       * MAIN-MENU-SECTION - 4 item menu, shown after successful login
       * ================================================================
        MAIN-MENU-SECTION SECTION.
+           MOVE "Main Menu:" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
            MOVE "1. Find a job/internship" TO WS-MESSAGE
            PERFORM SHOW-AND-LOG-SECTION
            MOVE "2. Find someone you know" TO WS-MESSAGE
