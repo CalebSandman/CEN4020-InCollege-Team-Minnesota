@@ -17,11 +17,11 @@
        FILE SECTION.
        FD  ACCOUNT-FILE.
        01  ACCOUNT-RECORD.
-           05  ACCT-USERNAME           PIC X(20).
+           05  ACCT-USERNAME           PIC X(50).
            05  ACCT-PASSWORD           PIC X(12).
 
        FD  OUTPUT-FILE.
-       01  OUTPUT-RECORD               PIC X(80).
+       01  OUTPUT-RECORD               PIC X(200).
 
        WORKING-STORAGE SECTION.
 
@@ -39,8 +39,8 @@
        01  WS-ACCOUNT-COUNT            PIC 9 VALUE 0.
        01  WS-ACCOUNTS-TABLE.
            05  WS-ACCOUNT OCCURS 5 TIMES INDEXED BY ACCT-IDX.
-               10  WS-USERNAME         PIC X(20).
-               10 WS-PASSWORD          PIC X(12).
+               10  WS-USERNAME         PIC X(50).
+               10  WS-PASSWORD         PIC X(12).
 
        01  WS-EOF-FLAG                 PIC X VALUE "N".
            88 END-OF-ACCOUNTS          VALUE "Y".
@@ -48,7 +48,7 @@
       * ---------------------------------------------------------------
       * Shared output helper (SHOW-AND-LOG writes to screen + file)
       * ---------------------------------------------------------------
-       01   WS-MESSAGE                 PIC X(80).
+       01   WS-MESSAGE                 PIC X(200).
 
       * ---------------------------------------------------------------
       * Navigation / control flags
@@ -56,15 +56,18 @@
        01  WS-CONTINUE-FLAG            PIC X VALUE "Y".
            88  KEEP-RUNNING            VALUE "Y".
 
+       01  WS-EXIT-FLAG                PIC X VALUE "N".
+           88 EXIT-REQUESTED           VALUE "Y".
+
        01  WS-LOGGED-IN-FLAG           PIC X VALUE "N".
            88  IS-LOGGED-IN            VALUE "Y".
 
-       01  WS-WELCOME-CHOICE           PIC X(1).
+       01  WS-MENU-CHOICE              PIC X(1).
        
       * ---------------------------------------------------------------
       * Login / registration working fields
       * ---------------------------------------------------------------
-       01  WS-INPUT-USERNAME           PIC X(20).
+       01  WS-INPUT-USERNAME           PIC X(50).
        01  WS-INPUT-PASSWORD           PIC X(12).
 
        01  WS-LOGIN-SUCCESS-FLAG       PIC X VALUE "N".
@@ -101,6 +104,13 @@
            PERFORM UNTIL NOT KEEP-RUNNING
                PERFORM WELCOME-SECTION
            END-PERFORM
+
+           IF NOT EXIT-REQUESTED
+               MOVE "Y" TO WS-CONTINUE-FLAG
+               PERFORM UNTIL NOT KEEP-RUNNING
+                   PERFORM MAIN-MENU-SECTION
+               END-PERFORM
+           END-IF
 
            PERFORM FINALIZE-SECTION
            STOP RUN.
@@ -145,18 +155,19 @@
            MOVE "3. Exit" TO WS-MESSAGE
            PERFORM SHOW-AND-LOG-SECTION
 
-           ACCEPT WS-WELCOME-CHOICE
+           ACCEPT WS-MENU-CHOICE
 
-           EVALUATE WS-WELCOME-CHOICE
+           EVALUATE WS-MENU-CHOICE
                WHEN "1"
                    PERFORM LOGIN-USER-SECTION
                    IF LOGIN-SUCCESSFUL
-                       PERFORM MAIN-MENU-SECTION
+                       MOVE "N" TO WS-CONTINUE-FLAG
                    END-IF
                WHEN "2"
                    PERFORM REGISTER-USER-SECTION
                WHEN "3"
                    MOVE "N" TO WS-CONTINUE-FLAG
+                   SET EXIT-REQUESTED TO TRUE
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                    TO WS-MESSAGE
@@ -289,7 +300,9 @@
 
            IF LOGIN-SUCCESSFUL
                SET IS-LOGGED-IN TO TRUE
-               MOVE "Welcome in!" TO WS-MESSAGE
+               STRING "Welcome in, "
+                   FUNCTION TRIM(WS-INPUT-USERNAME)
+                   "!" DELIMITED BY SIZE INTO WS-MESSAGE
                PERFORM SHOW-AND-LOG-SECTION
            ELSE
                MOVE "Error: Incorrect username or password."
@@ -301,8 +314,86 @@
       * MAIN-MENU-SECTION - 4 item menu, shown after successful login
       * ================================================================
        MAIN-MENU-SECTION SECTION.
-           MOVE "[TEST]" TO WS-MESSAGE
-               PERFORM SHOW-AND-LOG-SECTION.
+           MOVE "Main Menu:" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "1. Find a job/internship" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "2. Find someone you know" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "3. Learn a new skill" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "4. Logout" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+
+           ACCEPT WS-MENU-CHOICE
+
+           EVALUATE WS-MENU-CHOICE
+               WHEN "1"
+                   MOVE "Option is under construction" TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+      *Functionality not implemented
+               WHEN "2"
+                   MOVE "Option is under construction" TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+      *Functionality not implemented
+               WHEN "3"
+                   PERFORM UNTIL NOT KEEP-RUNNING
+                       PERFORM SKILLS-MENU-SECTION
+                   END-PERFORM
+                   MOVE "Y" TO WS-CONTINUE-FLAG
+               WHEN "4"
+                   MOVE "N" TO WS-CONTINUE-FLAG
+               WHEN OTHER
+                   MOVE "Invalid choice! Please try again."
+                   TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+           END-EVALUATE.
+
+      * ================================================================
+      * SKILLS-MENU-SECTION - 5 item menu, shown after selecting
+      * "Learn a new skill"
+      * ================================================================
+       SKILLS-MENU-SECTION SECTION.
+           MOVE "Skills:" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "1. Programming" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "2. Data Analysis" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "3. Research and Information Literacy" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "4. Project Management" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "5. Leadership" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+           MOVE "6. Return" TO WS-MESSAGE
+           PERFORM SHOW-AND-LOG-SECTION
+
+           ACCEPT WS-MENU-CHOICE
+
+           EVALUATE WS-MENU-CHOICE
+               WHEN "1"
+                   MOVE "Skill is under construction" TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+               WHEN "2"
+                   MOVE "Skill is under construction" TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+               WHEN "3"
+                   MOVE "Skill is under construction" TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+               WHEN "4"
+                   MOVE "Skill is under construction" TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+               WHEN "5"
+                   MOVE "Skill is under construction" TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+               WHEN "6"
+                  MOVE "N" TO WS-CONTINUE-FLAG
+               WHEN OTHER
+                   MOVE "Invalid choice! Please try again."
+                   TO WS-MESSAGE
+                   PERFORM SHOW-AND-LOG-SECTION
+           END-EVALUATE.
 
       * ================================================================
       * SHOW-AND-LOG-SECTION - helper paragraph used by every section
