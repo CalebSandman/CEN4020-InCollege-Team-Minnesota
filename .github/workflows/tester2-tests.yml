@@ -1,5 +1,4 @@
-
-name: Tester 2 Tests
+name: Tester 2 - SCRUM 12 Tests
 
 on:
   push:
@@ -22,18 +21,94 @@ jobs:
       - name: Compile InCollege
         run: cobc -x -o InCollege InCollege.cbl
 
-      - name: Run TC-OUTPUT-01
+      - name: Run SCRUM-12 tests
         run: |
-          ./InCollege < Testing/tester2/TC-OUTPUT-01-Input.txt | tee console-output.txt
+          mkdir -p test-results
 
-      - name: Show generated output file
-        run: cat data/output.txt
+          run_test() {
+            FILE="$1"
+            NAME="$2"
+            EXPECTED="$3"
 
-      - name: Save test results
+            echo "====================================="
+            echo "Running $NAME"
+            echo "Input file: $FILE"
+            echo "Expected: $EXPECTED"
+            echo "====================================="
+
+            # Start every test with a fresh account file/output file
+            rm -f data/accounts.dat
+            rm -f data/output.txt
+
+            # Run for at most 5 seconds so an unfinished program cannot hang forever
+            timeout 5s ./InCollege < "$FILE" \
+              > "test-results/$NAME-console.txt" 2>&1 || true
+
+            # Preserve the application's generated output
+            if [ -f data/output.txt ]; then
+              cp data/output.txt "test-results/$NAME-output.txt"
+            else
+              echo "data/output.txt was not created" \
+                > "test-results/$NAME-output.txt"
+            fi
+
+            echo ""
+            echo "--- Console Output ---"
+            cat "test-results/$NAME-console.txt"
+
+            echo ""
+            echo "--- Test Result ---"
+
+            if grep -Fq "$EXPECTED" "test-results/$NAME-console.txt"; then
+              echo "$NAME: PASS"
+              echo "PASS" > "test-results/$NAME-result.txt"
+            else
+              echo "$NAME: FAIL"
+              echo "Expected message not found: $EXPECTED"
+              echo "FAIL" > "test-results/$NAME-result.txt"
+            fi
+
+            echo ""
+          }
+
+          run_test \
+            "Testing/tester2/SCRUM-12/SCRUM-19.txt" \
+            "SCRUM-19" \
+            "Job search/internship is under construction."
+
+          run_test \
+            "Testing/tester2/SCRUM-12/SCRUM-20.txt" \
+            "SCRUM-20" \
+            "Find someone you know is under construction."
+
+          run_test \
+            "Testing/tester2/SCRUM-12/SCRUM-21/Skill-1.txt" \
+            "SCRUM-21-Skill-1" \
+            "This skill is under construction."
+
+          run_test \
+            "Testing/tester2/SCRUM-12/SCRUM-21/Skill-2.txt" \
+            "SCRUM-21-Skill-2" \
+            "This skill is under construction."
+
+          run_test \
+            "Testing/tester2/SCRUM-12/SCRUM-21/Skill-3.txt" \
+            "SCRUM-21-Skill-3" \
+            "This skill is under construction."
+
+          run_test \
+            "Testing/tester2/SCRUM-12/SCRUM-21/Skill-4.txt" \
+            "SCRUM-21-Skill-4" \
+            "This skill is under construction."
+
+          run_test \
+            "Testing/tester2/SCRUM-12/SCRUM-21/Skill-5.txt" \
+            "SCRUM-21-Skill-5" \
+            "This skill is under construction."
+
+      - name: Save SCRUM-12 test results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: TC-OUTPUT-01-results
-          path: |
-            Testing/tester2/TC-OUTPUT-01-Input.txt
-            console-output.txt
-            data/output.txt
+          name: SCRUM-12-test-results
+          path: test-results/
