@@ -1,1 +1,39 @@
 
+name: Tester 2 Tests
+
+on:
+  push:
+    branches:
+      - tester2-epic1-tests
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install GnuCOBOL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnucobol
+
+      - name: Compile InCollege
+        run: cobc -x -o InCollege InCollege.cbl
+
+      - name: Run TC-OUTPUT-01
+        run: |
+          ./InCollege < Testing/tester2/TC-OUTPUT-01-Input.txt | tee console-output.txt
+
+      - name: Show generated output file
+        run: cat data/output.txt
+
+      - name: Save test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TC-OUTPUT-01-results
+          path: |
+            Testing/tester2/TC-OUTPUT-01-Input.txt
+            console-output.txt
+            data/output.txt
