@@ -1,0 +1,89 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+johndoe
+Enter password:
+1ongPasswrd!
+Welcome in, johndoe!
+Main Menu:
+1. Find a job/internship
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+1
+Option is under construction
+Main Menu:
+1. Find a job/internship
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+2
+Option is under construction
+Main Menu:
+1. Find a job/internship
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+3
+Skills:
+1. Programming
+2. Data Analysis
+3. Research and Information Literacy
+4. Project Management
+5. Leadership
+6. Return
+1
+Skill is under construction
+Skills:
+1. Programming
+2. Data Analysis
+3. Research and Information Literacy
+4. Project Management
+5. Leadership
+6. Return
+2
+Skill is under construction
+Skills:
+1. Programming
+2. Data Analysis
+3. Research and Information Literacy
+4. Project Management
+5. Leadership
+6. Return
+3
+Skill is under construction
+Skills:
+1. Programming
+2. Data Analysis
+3. Research and Information Literacy
+4. Project Management
+5. Leadership
+6. Return
+4
+Skill is under construction
+Skills:
+1. Programming
+2. Data Analysis
+3. Research and Information Literacy
+4. Project Management
+5. Leadership
+6. Return
+5
+Skill is under construction
+Skills:
+1. Programming
+2. Data Analysis
+3. Research and Information Literacy
+4. Project Management
+5. Leadership
+6. Return
+6
+Main Menu:
+1. Find a job/internship
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+4

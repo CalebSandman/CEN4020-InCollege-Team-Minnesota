@@ -1,0 +1,16 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+sandman12
+Enter password:
+Pass1234567!
+Welcome in, sandman12!
+Main Menu:
+1. Find a job/internship
+2. Find someone you know
+3. Learn a new skill
+4. Logout
+4

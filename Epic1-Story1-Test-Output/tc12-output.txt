@@ -1,0 +1,15 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+wronguser
+Enter password:
+Password1!
+Error: Incorrect username or password.
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+3
