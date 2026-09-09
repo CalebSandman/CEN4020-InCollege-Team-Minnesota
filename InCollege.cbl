@@ -112,6 +112,9 @@
        01  WS-HAS-SPECIAL-FLAG         PIC X VALUE "N".
            88  HAS-SPECIAL-CHAR        VALUE "Y".
 
+       01  WS-HAS-DIGIT-FLAG           PIC X VALUE "N".
+           88  HAS-DIGIT               VALUE "Y".
+
        01  WS-TRIMMED-PASSWORD         PIC X(12).
        01  WS-PASSWORD-LENGTH          PIC 99.
        01  WS-CHAR-INDEX               PIC 99.
@@ -253,8 +256,8 @@
                        PERFORM PRINT-AND-LOG-SECTION
                    ELSE
                        STRING "Password must be 8-12 character, "
-                           "contain one capital letter, and one "
-                           "special character."
+                           "contain at least one capital letter, one "
+                           "digit, and one special character."
                            DELIMITED BY SIZE INTO WS-MESSAGE
                        PERFORM PRINT-AND-LOG-SECTION
                    END-IF
@@ -263,12 +266,13 @@
 
       * ================================================================
       * VALIDATE-PASSWORD-SECTION
-      * Rules: 8-12 characters, at least 1 capital letter,
-      *        at least 1 special character
+      * Rules: 8-12 characters, at least 1 capital letter, 1 digit,
+      * and 1 special character
       * ================================================================
        VALIDATE-PASSWORD-SECTION SECTION.
            MOVE "N" TO WS-HAS-UPPER-FLAG
            MOVE "N" TO WS-HAS-SPECIAL-FLAG
+           MOVE "N" TO WS-HAS-DIGIT-FLAG
            MOVE "N" TO WS-PASSWORD-VALID-FLAG
 
            MOVE FUNCTION TRIM(WS-INPUT-PASSWORD) TO WS-TRIMMED-PASSWORD
@@ -289,9 +293,13 @@
                        AND WS-CURRENT-CHAR NOT NUMERIC
                        SET HAS-SPECIAL-CHAR TO TRUE
                    END-IF
+
+                   IF WS-CURRENT-CHAR IS NUMERIC
+                       SET HAS-DIGIT TO TRUE
+                   END-IF
                END-PERFORM
 
-               IF HAS-UPPER-CASE AND HAS-SPECIAL-CHAR
+               IF HAS-UPPER-CASE AND HAS-SPECIAL-CHAR AND HAS-DIGIT
                    SET PASSWORD-IS-VALID TO TRUE
                END-IF
            END-IF.
