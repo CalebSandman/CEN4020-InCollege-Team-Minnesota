@@ -453,6 +453,9 @@
                STOP RUN
            END-READ.
 
+           MOVE WS-INPUT-LINE TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION.
+
       * ================================================================
       * FINALIZE-SECTION - close transcript file, wrap up
       * ================================================================
