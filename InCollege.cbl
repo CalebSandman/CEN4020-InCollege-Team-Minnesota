@@ -2,12 +2,12 @@
       *                        DEVELOPERS READ THIS
       *
       *    To print to console: MOVE "[TEXT]" TO WS_MESSAGE
-      *                         PERFORM SHOW-AND-LOG-SECTION
+      *                         PERFORM PRINT-AND-LOG-SECTION
       *
       *    For menu selections READ into WS-MENU-CHOICE
       *
-      *
-      *
+      *    WS stands for working storage
+      *    Use on variables that store values
       *
       *
       *
@@ -23,6 +23,10 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-ACCOUNT-FILE-STATUS.
 
+           SELECT INPUT-FILE ASSIGN TO "data/input.txt"
+               ORGANIZATION IS LINE sequential
+               FILE STATUS IS WS-INPUT-FILE-STATUS.
+
            SELECT OUTPUT-FILE ASSIGN TO "data/output.txt"
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-OUTPUT-FILE-STATUS.
@@ -36,6 +40,8 @@
            05  ACCT-USERNAME           PIC X(50).
            05  ACCT-PASSWORD           PIC X(12).
 
+       FD  INPUT-FILE.
+       01  INPUT-RECORD                PIC X(50).
        FD  OUTPUT-FILE.
        01  OUTPUT-RECORD               PIC X(200).
 
@@ -46,6 +52,7 @@
       * on the very first run, vs. normal read/write results)
       * ---------------------------------------------------------------
        01  WS-ACCOUNT-FILE-STATUS      PIC XX VALUE "00".
+       01  WS-INPUT-FILE-STATUS        PIC XX VALUE "00".
        01  WS-OUTPUT-FILE-STATUS       PIC XX VALUE "00".
 
       * ---------------------------------------------------------------
@@ -62,9 +69,10 @@
            88 END-OF-ACCOUNTS          VALUE "Y".
 
       * ---------------------------------------------------------------
-      * Shared output helper (SHOW-AND-LOG writes to screen + file)
+      * Shared I/O helper (PRINT-AND-LOG writes to screen + file)
       * ---------------------------------------------------------------
        01   WS-MESSAGE                 PIC X(200).
+       01  WS-INPUT-LINE               PIC X(50).
 
       * ---------------------------------------------------------------
       * Navigation / control flags
@@ -136,6 +144,13 @@
       * ================================================================
        INITIALIZE-SECTION SECTION.
            OPEN OUTPUT OUTPUT-FILE
+           OPEN INPUT INPUT-FILE
+           IF WS-INPUT-FILE-STATUS = "35"
+               MOVE "Error: data/input.txt not found" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
 
            OPEN INPUT ACCOUNT-FILE
            IF WS-ACCOUNT-FILE-STATUS = "35"
@@ -162,16 +177,17 @@
       * ================================================================
        WELCOME-SECTION SECTION.
            MOVE "Welcome to InCollege!" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
 
            MOVE "1. Login" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "2. Register" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "3. Exit" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
 
-           ACCEPT WS-MENU-CHOICE
+           PERFORM READ-INPUT-SECTION
+           MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
 
            EVALUATE WS-MENU-CHOICE
                WHEN "1"
@@ -187,7 +203,7 @@
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                    TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
            END-EVALUATE.
 
       * ================================================================
@@ -197,11 +213,12 @@
            IF WS-ACCOUNT-COUNT >= WS-MAX-ACCOUNTS
                MOVE "Error: Maximum number of accounts had been reached"
                TO WS-MESSAGE
-               PERFORM SHOW-AND-LOG-SECTION
+               PERFORM PRINT-AND-LOG-SECTION
            ELSE
                MOVE "Enter username: " TO WS-MESSAGE
-               PERFORM SHOW-AND-LOG-SECTION
-               ACCEPT WS-INPUT-USERNAME
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM READ-INPUT-SECTION
+               MOVE WS-INPUT-LINE TO WS-INPUT-USERNAME
 
                MOVE "N" TO WS-FOUND-USER-FLAG
                PERFORM VARYING ACCT-IDX FROM 1 BY 1
@@ -214,11 +231,12 @@
                IF USER-FOUND
                    MOVE "Error: Username already taken."
                        TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
                ELSE
                    MOVE "Enter password:" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
-                   ACCEPT WS-INPUT-PASSWORD
+                   PERFORM PRINT-AND-LOG-SECTION
+                   PERFORM READ-INPUT-SECTION
+                   MOVE WS-INPUT-LINE TO WS-INPUT-PASSWORD
 
                    PERFORM VALIDATE-PASSWORD-SECTION
 
@@ -232,13 +250,13 @@
 
                        MOVE "Account created!"
                            TO WS-MESSAGE
-                       PERFORM SHOW-AND-LOG-SECTION
+                       PERFORM PRINT-AND-LOG-SECTION
                    ELSE
                        STRING "Password must be 8-12 character, "
                            "contain one capital letter, and one "
                            "special character."
                            DELIMITED BY SIZE INTO WS-MESSAGE
-                       PERFORM SHOW-AND-LOG-SECTION
+                       PERFORM PRINT-AND-LOG-SECTION
                    END-IF
                END-IF
            END-IF.
@@ -299,12 +317,14 @@
            MOVE "N" TO WS-LOGIN-SUCCESS-FLAG
 
            MOVE "Enter username: " TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
-           ACCEPT WS-INPUT-USERNAME
+           PERFORM PRINT-AND-LOG-SECTION
+           PERFORM READ-INPUT-SECTION
+           MOVE WS-INPUT-LINE TO WS-INPUT-USERNAME
 
            MOVE "Enter password: " TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
-           ACCEPT WS-INPUT-PASSWORD
+           PERFORM PRINT-AND-LOG-SECTION
+           PERFORM READ-INPUT-SECTION
+           MOVE WS-INPUT-LINE TO WS-INPUT-PASSWORD
 
            PERFORM VARYING ACCT-IDX FROM 1 BY 1
                UNTIL ACCT-IDX > WS-ACCOUNT-COUNT
@@ -319,11 +339,11 @@
                STRING "Welcome in, "
                    FUNCTION TRIM(WS-INPUT-USERNAME)
                    "!" DELIMITED BY SIZE INTO WS-MESSAGE
-               PERFORM SHOW-AND-LOG-SECTION
+               PERFORM PRINT-AND-LOG-SECTION
            ELSE
                MOVE "Error: Incorrect username or password."
                TO WS-MESSAGE
-               PERFORM SHOW-AND-LOG-SECTION
+               PERFORM PRINT-AND-LOG-SECTION
            END-IF.
 
       * ================================================================
@@ -331,26 +351,27 @@
       * ================================================================
        MAIN-MENU-SECTION SECTION.
            MOVE "Main Menu:" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "1. Find a job/internship" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "2. Find someone you know" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "3. Learn a new skill" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "4. Logout" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
 
-           ACCEPT WS-MENU-CHOICE
+           PERFORM READ-INPUT-SECTION
+           MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
 
            EVALUATE WS-MENU-CHOICE
                WHEN "1"
                    MOVE "Option is under construction" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
       *Functionality not implemented
                WHEN "2"
                    MOVE "Option is under construction" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
       *Functionality not implemented
                WHEN "3"
                    PERFORM UNTIL NOT KEEP-RUNNING
@@ -362,7 +383,7 @@
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                    TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
            END-EVALUATE.
 
       * ================================================================
@@ -371,57 +392,70 @@
       * ================================================================
        SKILLS-MENU-SECTION SECTION.
            MOVE "Skills:" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "1. Programming" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "2. Data Analysis" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "3. Research and Information Literacy" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "4. Project Management" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "5. Leadership" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "6. Return" TO WS-MESSAGE
-           PERFORM SHOW-AND-LOG-SECTION
+           PERFORM PRINT-AND-LOG-SECTION
 
-           ACCEPT WS-MENU-CHOICE
+           PERFORM READ-INPUT-SECTION
+           MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
 
            EVALUATE WS-MENU-CHOICE
                WHEN "1"
                    MOVE "Skill is under construction" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
                WHEN "2"
                    MOVE "Skill is under construction" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
                WHEN "3"
                    MOVE "Skill is under construction" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
                WHEN "4"
                    MOVE "Skill is under construction" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
                WHEN "5"
                    MOVE "Skill is under construction" TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
                WHEN "6"
                   MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                    TO WS-MESSAGE
-                   PERFORM SHOW-AND-LOG-SECTION
+                   PERFORM PRINT-AND-LOG-SECTION
            END-EVALUATE.
 
       * ================================================================
-      * SHOW-AND-LOG-SECTION - helper paragraph used by every section
-      * Displays WS-MESSAGE on screen AND writes it to the transcript
+      * PRINT-AND-LOG-SECTION - helper paragraph used by every section
+      * Displays WS-MESSAGE on screen AND writes it to the output
       * file, so the two can never fall out of sync.
       * ================================================================
-       SHOW-AND-LOG-SECTION SECTION.
+       PRINT-AND-LOG-SECTION SECTION.
            DISPLAY WS-MESSAGE
            WRITE OUTPUT-RECORD FROM WS-MESSAGE.
+
+      * ================================================================
+      * READ-INPUT-SECTION
+      * ================================================================
+       READ-INPUT-SECTION SECTION.
+           READ INPUT-FILE INTO WS-INPUT-LINE
+           AT END
+               MOVE "Error: input file ran out of lines" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STOP RUN
+           END-READ.
 
       * ================================================================
       * FINALIZE-SECTION - close transcript file, wrap up
       * ================================================================
        FINALIZE-SECTION SECTION.
            CLOSE OUTPUT-FILE.
+           CLOSE INPUT-FILE.
