@@ -1,0 +1,40 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+CalebSandman
+Enter password:
+Password123!
+Welcome in, CalebSandman!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+First Name: Caleb
+Last Name: Sandman
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2027
+About Me: I like video games.
+Experience:
+None provided.
+Education:
+None provided.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6

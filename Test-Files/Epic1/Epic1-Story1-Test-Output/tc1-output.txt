@@ -1,0 +1,15 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+2
+Enter username:
+johndoe
+Enter password:
+1ongPasswrd!
+Account created!
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+3

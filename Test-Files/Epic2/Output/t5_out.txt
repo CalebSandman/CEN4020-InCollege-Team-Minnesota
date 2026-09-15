@@ -1,0 +1,109 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+CalebSandman
+Enter password:
+Password123!
+Welcome in, CalebSandman!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+First Name: Caleb
+Last Name: Sandman
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2027
+About Me: I LOVE video games.
+Experience:
+None provided.
+Education:
+Degree: Master of Nothing
+University: USF
+Years: 2004-2008
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Re-enter all fields to replace your profile.
+Enter First Name (max 50):
+Caleb
+Enter Last Name (max 50):
+Sandman
+Enter University/College (max 100):
+University of South Florida
+Enter Major (max 100):
+Computer Science
+Enter Graduation Year (2026-2033):
+2027
+Enter About Me (max 200; blank to skip):
+I LOVE video games.
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+DONE
+EDUCATION #1 - Degree (max 100; DONE to finish):
+
+This field is required. Try again.
+EDUCATION #1 - Degree (max 100; DONE to finish):
+Master of Nothing
+University/College (max 100):
+
+This field is required. Try again.
+University/College (max 100):
+USF
+Years Attended (max 50):
+
+This field is required. Try again.
+Years Attended (max 50):
+2004-2008
+EDUCATION #2 - Degree (max 100; DONE to finish):
+DONE
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+First Name: Caleb
+Last Name: Sandman
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2027
+About Me: I LOVE video games.
+Experience:
+None provided.
+Education:
+Degree: Master of Nothing
+University: USF
+Years: 2004-2008
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6

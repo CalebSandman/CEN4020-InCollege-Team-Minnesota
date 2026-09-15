@@ -1,0 +1,146 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+NazmusSakeeb
+Enter password:
+Password123!
+Welcome in, NazmusSakeeb!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+First Name: Nazmus
+Last Name: Sakeeb
+University: USF
+Major: Computer Science?
+Graduation Year: 2033
+About Me:
+Experience:
+Title: Software Intern
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Title: Software Intern 2
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description:
+Title: Software Intern 3
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Education:
+None provided.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Re-enter all fields to replace your profile.
+Enter First Name (max 50):
+012345678901234567890123456789012345678901234567891
+Entry is too long. Try again.
+Enter First Name (max 50):
+Nazmus
+Enter Last Name (max 50):
+012345678901234567890123456789012345678901234567891
+Entry is too long. Try again.
+Enter Last Name (max 50):
+Sakeeb
+Enter University/College (max 100):
+USF
+Enter Major (max 100):
+Computer Science?
+Enter Graduation Year (2026-2033):
+2025
+Enter a four-digit year from 2026 to 2033.
+Enter Graduation Year (2026-2033):
+2034
+Enter a four-digit year from 2026 to 2033.
+Enter Graduation Year (2026-2033):
+2033
+Enter About Me (max 200; blank to skip):
+
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+Software Intern
+Company/Organization (max 100):
+Tech Solutions Inc.
+Dates (max 50):
+2022-2024
+Description (blank to skip) (max 100):
+Desc
+EXPERIENCE #2 - Title (max 100; DONE to finish):
+Software Intern 2
+Company/Organization (max 100):
+Tech Solutions Inc.
+Dates (max 50):
+2022-2024
+Description (blank to skip) (max 100):
+
+EXPERIENCE #3 - Title (max 100; DONE to finish):
+Software Intern 3
+Company/Organization (max 100):
+Tech Solutions Inc.
+Dates (max 50):
+2022-2024
+Description (blank to skip) (max 100):
+Desc
+EDUCATION #1 - Degree (max 100; DONE to finish):
+DONE
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+First Name: Nazmus
+Last Name: Sakeeb
+University: USF
+Major: Computer Science?
+Graduation Year: 2033
+About Me:
+Experience:
+Title: Software Intern
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Title: Software Intern 2
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description:
+Title: Software Intern 3
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Education:
+None provided.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+--- END_OF_PROGRAM_EXECUTION ---
