@@ -1,6 +1,12 @@
-input.txt
-output.txt
-accounts.dat
+#------------------------------------------------------
+# Ignore Files in data but keep the folder
+#------------------------------------------------------
+data/*
+!data/.gitkeep
+
+
+
+#------------------------------------------------------
+# Ignore compiled InCollege file
+#------------------------------------------------------
 InCollege
-data/profiles.dat*
-console-output.txt
