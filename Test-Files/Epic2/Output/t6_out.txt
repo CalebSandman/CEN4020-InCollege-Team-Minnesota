@@ -1,0 +1,135 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+2
+Enter username:
+lshaw34
+Enter password:
+Password1!
+Account created!
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+lshaw34
+Enter password:
+Password1!
+Welcome in, lshaw34!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Enter First Name (max 50):
+Luke
+Enter Last Name (max 50):
+Shaw
+Enter University/College (max 100):
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean m
+Enter Major (max 100):
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, to
+Enter Graduation Year (2026-2033):
+2033
+Enter About Me (max 200; blank to skip):
+this is me
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+Intern of Internship of Interns
+Company/Organization (max 100):
+The Intern Company
+Dates (max 50):
+Summer 2029
+Description (blank to skip) (max 100):
+I was an intern for interns
+EXPERIENCE #2 - Title (max 100; DONE to finish):
+Intern of Internship of Interns
+Company/Organization (max 100):
+The Intern Company
+Dates (max 50):
+Summer 2029
+Description (blank to skip) (max 100):
+I was an intern for interns
+EXPERIENCE #3 - Title (max 100; DONE to finish):
+Intern of Internship of Interns
+Company/Organization (max 100):
+The Intern Company
+Dates (max 50):
+Summer 2029
+Description (blank to skip) (max 100):
+I was an intern for interns
+EDUCATION #1 - Degree (max 100; DONE to finish):
+Bachelor of Computer Science
+University/College (max 100):
+University of South Lorida
+Years Attended (max 50):
+2022-2026
+EDUCATION #2 - Degree (max 100; DONE to finish):
+Bachelor of Computer Science
+University/College (max 100):
+University of South Lorida
+Years Attended (max 50):
+2022-2026
+EDUCATION #3 - Degree (max 100; DONE to finish):
+Bachelor of Computer Science
+University/College (max 100):
+University of South Lorida
+Years Attended (max 50):
+2022-2026
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+First Name: Luke
+Last Name: Shaw
+University: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean m
+Major: Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, to
+Graduation Year: 2033
+About Me: this is me
+Experience:
+Title: Intern of Internship of Interns
+Company: The Intern Company
+Dates: Summer 2029
+Description: I was an intern for interns
+Title: Intern of Internship of Interns
+Company: The Intern Company
+Dates: Summer 2029
+Description: I was an intern for interns
+Title: Intern of Internship of Interns
+Company: The Intern Company
+Dates: Summer 2029
+Description: I was an intern for interns
+Education:
+Degree: Bachelor of Computer Science
+University: University of South Lorida
+Years: 2022-2026
+Degree: Bachelor of Computer Science
+University: University of South Lorida
+Years: 2022-2026
+Degree: Bachelor of Computer Science
+University: University of South Lorida
+Years: 2022-2026
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6

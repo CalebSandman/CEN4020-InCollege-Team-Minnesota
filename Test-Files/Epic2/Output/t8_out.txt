@@ -1,0 +1,132 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+2
+Enter username:
+sman39
+Error: Username already taken.
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+PassWord2!
+Invalid choice! Please try again.
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+sman39
+Enter password:
+PassWord2!
+Welcome in, sman39!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Re-enter all fields to replace your profile.
+Enter First Name (max 50):
+Super
+Enter Last Name (max 50):
+Man
+Enter University/College (max 100):
+
+This field is required. Try again.
+Enter University/College (max 100):
+University of Lorem Ipsum
+Enter Major (max 100):
+
+This field is required. Try again.
+Enter Major (max 100):
+Masters in Lorem Ipsum
+Enter Graduation Year (2026-2033):
+2034
+Enter a four-digit year from 2026 to 2033.
+Enter Graduation Year (2026-2033):
+2025
+Enter a four-digit year from 2026 to 2033.
+Enter Graduation Year (2026-2033):
+2033
+Enter About Me (max 200; blank to skip):
+
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+TITLE1
+Company/Organization (max 100):
+COMPANY1
+Dates (max 50):
+SUMMER 25- SUMMER 26
+Description (blank to skip) (max 100):
+this is a description
+EXPERIENCE #2 - Title (max 100; DONE to finish):
+DONE
+EDUCATION #1 - Degree (max 100; DONE to finish):
+DONE
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Re-enter all fields to replace your profile.
+Enter First Name (max 50):
+super
+Enter Last Name (max 50):
+man
+Enter University/College (max 100):
+usf
+Enter Major (max 100):
+major major
+Enter Graduation Year (2026-2033):
+2029
+Enter About Me (max 200; blank to skip):
+
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+DONE
+EDUCATION #1 - Degree (max 100; DONE to finish):
+DONE
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+First Name: super
+Last Name: man
+University: usf
+Major: major major
+Graduation Year: 2029
+About Me:
+Experience:
+None provided.
+Education:
+None provided.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6
