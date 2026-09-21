@@ -754,6 +754,16 @@
            END-IF
            MOVE "--- Your Profile ---" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
+
+            MOVE SPACES TO WS-MESSAGE
+            STRING "==== Profile for "
+               FUNCTION TRIM(PF-FIRST)
+               " "
+               FUNCTION TRIM(PF-LAST)
+               DELIMITED BY SIZE
+               INTO WS-MESSAGE
+            PERFORM PRINT-AND-LOG-SECTION
+
            STRING "First Name: " FUNCTION TRIM(PF-FIRST)
                DELIMITED BY SIZE INTO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
