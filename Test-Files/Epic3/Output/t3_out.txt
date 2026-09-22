@@ -1,0 +1,214 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+2
+Enter username:
+Epic2Demo
+Error: Username already taken.
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+Strong1!
+Invalid choice! Please try again.
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+Epic2Demo
+Enter password:
+Strong1!
+Welcome in, Epic2Demo!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+==== Profile for Nazmus Sakeeb
+First Name: Nazmus
+Last Name: Sakeeb
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2028
+About Me: Updated profile.
+Experience:
+None provided.
+Education:
+None provided.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Re-enter all fields to replace your profile.
+Enter First Name (max 50):
+Demo
+Enter Last Name (max 50):
+Omed
+Enter University/College (max 100):
+University of South Florida
+Enter Major (max 100):
+Computer Science
+Enter Graduation Year (2026-2033):
+2027
+Enter About Me (max 200; blank to skip):
+Computer science student.
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+Intern 0
+Company/Organization (max 100):
+Company 0
+Dates (max 50):
+Summer 2026
+Description (blank to skip) (max 100):
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+EXPERIENCE #2 - Title (max 100; DONE to finish):
+Intern 1
+Company/Organization (max 100):
+Company 1
+Dates (max 50):
+Summer 2026
+Description (blank to skip) (max 100):
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+EXPERIENCE #3 - Title (max 100; DONE to finish):
+Intern 2
+Company/Organization (max 100):
+Company 2
+Dates (max 50):
+Summer 2026
+Description (blank to skip) (max 100):
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+EDUCATION #1 - Degree (max 100; DONE to finish):
+Degree 0
+University/College (max 100):
+School 0
+Years Attended (max 50):
+2023-2026
+EDUCATION #2 - Degree (max 100; DONE to finish):
+Degree 1
+University/College (max 100):
+School 1
+Years Attended (max 50):
+2023-2026
+EDUCATION #3 - Degree (max 100; DONE to finish):
+Degree 2
+University/College (max 100):
+School 2
+Years Attended (max 50):
+2023-2026
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+==== Profile for Demo Omed
+First Name: Demo
+Last Name: Omed
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2027
+About Me: Computer science student.
+Experience:
+Title: Intern 0
+Company: Company 0
+Dates: Summer 2026
+Description: DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+Title: Intern 1
+Company: Company 1
+Dates: Summer 2026
+Description: DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+Title: Intern 2
+Company: Company 2
+Dates: Summer 2026
+Description: DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+Education:
+Degree: Degree 0
+University: School 0
+Years: 2023-2026
+Degree: Degree 1
+University: School 1
+Years: 2023-2026
+Degree: Degree 2
+University: School 2
+Years: 2023-2026
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Re-enter all fields to replace your profile.
+Enter First Name (max 50):
+Demo
+Enter Last Name (max 50):
+Omed
+Enter University/College (max 100):
+University of South Florida
+Enter Major (max 100):
+Computer Science
+Enter Graduation Year (2026-2033):
+2028
+Enter About Me (max 200; blank to skip):
+Updated profile.
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+DONE
+EDUCATION #1 - Degree (max 100; DONE to finish):
+DONE
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+==== Profile for Demo Omed
+First Name: Demo
+Last Name: Omed
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2028
+About Me: Updated profile.
+Experience:
+None provided.
+Education:
+None provided.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6

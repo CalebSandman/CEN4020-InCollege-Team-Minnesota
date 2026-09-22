@@ -1,0 +1,52 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+NazmusSakeeb
+Enter password:
+Password123!
+Welcome in, NazmusSakeeb!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+==== Profile for Nazmus Sakeeb
+First Name: Nazmus
+Last Name: Sakeeb
+University: USF
+Major: Computer Science?
+Graduation Year: 2033
+About Me:
+Experience:
+Title: Software Intern
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Title: Software Intern 2
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description:
+Title: Software Intern 3
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Education:
+None provided.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6
