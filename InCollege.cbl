@@ -1,4 +1,3 @@
-
       *                        DEVELOPERS READ THIS
       *
       *    To print to console: MOVE "[TEXT]" TO WS_MESSAGE
@@ -84,6 +83,10 @@
        01  WS-PROFILE-INDEX     BINARY-LONG.
        01  WS-ENTRY-DONE        PIC 9.
        01  WS-ENTRY-NUMBER      PIC 9.
+       01  WS-SEARCH-FULL-NAME   PIC X(101).
+       01  WS-SEARCH-FIRST     PIC X(50).
+       01  WS-SEARCH-LAST      PIC X(50).
+       01  WS-SEARCH-FOUND-FLAG    PIC 9 VALUE 0.
 
 
 
@@ -445,9 +448,10 @@
                WHEN "1" PERFORM EDIT-PROFILE-SECTION
                WHEN "2" PERFORM VIEW-PROFILE-SECTION
                WHEN "3"
-               WHEN "4"
                    MOVE "Option is under construction" TO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
+               WHEN "4"
+                   PERFORM SEARCH-PROFILE-SECTION
                WHEN "5"
                    PERFORM UNTIL NOT KEEP-RUNNING
                        PERFORM SKILLS-MENU-SECTION
@@ -818,5 +822,136 @@
                    DELIMITED BY SIZE INTO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
            END-PERFORM
+           MOVE "--------------------" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION.
+       
+
+      * SEARCH-PROFILE-SECTION - prompts for a full name and iterates
+      * through the profile to find a match and displays
+       SEARCH-PROFILE-SECTION SECTION.
+           IF WS-PROFILE-OPEN = 0
+               PERFORM OPEN-PROFILES-SECTION
+           END-IF
+
+           MOVE "Enter the full name of the person you are looking for:"
+                TO WS-PROMPT
+           MOVE 100 TO WS-FIELD-LIMIT
+           MOVE 1 TO WS-FIELD-REQUIRED
+           PERFORM READ-PROFILE-FIELD-SECTION
+           MOVE WS-INPUT-LINE TO WS-SEARCH-FULL-NAME
+
+           MOVE SPACES TO WS-SEARCH-FIRST WS-SEARCH-LAST
+           UNSTRING FUNCTION TRIM(WS-SEARCH-FULL-NAME)
+               DELIMITED BY " "
+               INTO WS-SEARCH-FIRST WS-SEARCH-LAST
+           
+           MOVE 0 TO WS-SEARCH-FOUND-FLAG
+
+           MOVE SPACES TO PF-USERNAME
+           START PROFILE-FILE KEY IS NOT LESS PF-USERNAME
+               INVALID KEY
+                   CONTINUE
+               NOT INVALID KEY
+                   PERFORM UNTIL WS-PROFILE-STATUS = "10"
+                       READ PROFILE-FILE NEXT
+                           AT END
+                               CONTINUE
+                           NOT AT END
+                               IF FUNCTION TRIM(PF-FIRST)
+                                = FUNCTION TRIM(WS-SEARCH-FIRST) AND 
+                                FUNCTION TRIM(PF-LAST) = 
+                                FUNCTION TRIM(WS-SEARCH-LAST)
+                                   MOVE 1 TO WS-SEARCH-FOUND-FLAG
+                                   PERFORM DISPLAY-FOUND-PROFILE-SECTION
+                               END-IF
+                       END-READ
+                   END-PERFORM
+           END-START
+
+           IF WS-SEARCH-FOUND-FLAG = 0
+               MOVE "No one by that name could be found." TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-IF
+
+           CLOSE PROFILE-FILE
+           MOVE 0 TO WS-PROFILE-OPEN.
+
+       DISPLAY-FOUND-PROFILE-SECTION SECTION.
+           STRING "=== Profile For " FUNCTION TRIM(WS-SEARCH-FULL-NAME)
+               DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           STRING "First Name: " FUNCTION TRIM(PF-FIRST)
+                  DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           STRING "Last Name: " FUNCTION TRIM(PF-LAST)
+                  DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           STRING "University: " FUNCTION TRIM(PF-UNIVERSITY)
+                  DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           STRING "Major: " FUNCTION TRIM(PF-MAJOR)
+                  DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           STRING "Graduation Year: " FUNCTION TRIM(PF-YEAR)
+                  DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           STRING "About Me: " FUNCTION TRIM(PF-ABOUT)
+                  DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           MOVE "Experience:" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           IF PF-EXP-COUNT = 0
+               MOVE "None provided." TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-IF
+           PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
+               UNTIL WS-PROFILE-INDEX > PF-EXP-COUNT
+               STRING "Title: "
+                   FUNCTION TRIM(PF-TITLE(WS-PROFILE-INDEX))
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STRING "Company: "
+                   FUNCTION TRIM(PF-COMPANY(WS-PROFILE-INDEX))
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STRING "Dates: "
+                   FUNCTION TRIM(PF-DATES(WS-PROFILE-INDEX))
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STRING "Description: "
+                   FUNCTION TRIM(PF-DESCRIPTION(WS-PROFILE-INDEX))
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-PERFORM
+
+           MOVE "Education:" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           IF PF-EDU-COUNT = 0
+               MOVE "None provided." TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-IF
+           PERFORM VARYING WS-PROFILE-INDEX FROM 1 BY 1
+               UNTIL WS-PROFILE-INDEX > PF-EDU-COUNT
+               STRING "Degree: "
+                   FUNCTION TRIM(PF-DEGREE(WS-PROFILE-INDEX))
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STRING "University: "
+                   FUNCTION TRIM(PF-SCHOOL(WS-PROFILE-INDEX))
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STRING "Years: "
+                   FUNCTION TRIM(PF-YEARS(WS-PROFILE-INDEX))
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-PERFORM
+
            MOVE "--------------------" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION.
