@@ -159,6 +159,11 @@
        01  WS-CHAR-INDEX               PIC 99.
        01  WS-CURRENT-CHAR             PIC X.
 
+      * Profile search fields
+       01 WS-SEARCH-NAME               PIC X(101).
+       01 WS-COMPARE-NAME              PIC X(101).
+       01 WS-SEARCH-FOUND              PIC 9 VALUE 0.
+
        PROCEDURE DIVISION.
 
 
@@ -445,9 +450,10 @@
                WHEN "1" PERFORM EDIT-PROFILE-SECTION
                WHEN "2" PERFORM VIEW-PROFILE-SECTION
                WHEN "3"
-               WHEN "4"
                    MOVE "Option is under construction" TO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
+               WHEN "4"
+                   PERFORM FIND-USER-SECTION
                WHEN "5"
                    PERFORM UNTIL NOT KEEP-RUNNING
                        PERFORM SKILLS-MENU-SECTION
@@ -755,6 +761,10 @@
            MOVE "--- Your Profile ---" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
 
+           PERFORM PRINT-PROFILE-SECTION.
+      * SPLITTING VIEW-PROFILE-SECTION INTO A VIEW AND PRINT SECTION
+
+       PRINT-PROFILE-SECTION SECTION.
             MOVE SPACES TO WS-MESSAGE
             STRING "==== Profile for "
                FUNCTION TRIM(PF-FIRST)
@@ -830,3 +840,49 @@
            END-PERFORM
            MOVE "--------------------" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION.
+
+       FIND-USER-SECTION SECTION.
+           IF WS-PROFILE-OPEN = 0
+               PERFORM OPEN-PROFILES-SECTION
+           END-IF
+
+           MOVE "Enter a full name to search for:" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           PERFORM READ-INPUT-SECTION
+           MOVE FUNCTION TRIM(WS-INPUT-LINE) TO WS-SEARCH-NAME
+
+           MOVE 0 TO WS-SEARCH-FOUND
+           MOVE LOW-VALUES TO PF-USERNAME
+           START PROFILE-FILE KEY IS NOT LESS THAN PF-USERNAME
+
+           IF WS-PROFILE-STATUS = "00"
+               PERFORM UNTIL WS-SEARCH-FOUND = 1
+                   READ PROFILE-FILE NEXT RECORD
+                       AT END
+                           EXIT PERFORM
+                       NOT AT END
+                           MOVE SPACES TO WS-COMPARE-NAME
+                           STRING FUNCTION TRIM(PF-FIRST) " "
+                               FUNCTION TRIM(PF-LAST)
+                               DELIMITED BY SIZE INTO WS-COMPARE-NAME
+           IF FUNCTION TRIM(WS-COMPARE-NAME) = WS-SEARCH-NAME
+               MOVE 1 TO WS-SEARCH-FOUND
+                           END-IF
+                   END-READ
+               END-PERFORM
+           END-IF
+
+           IF WS-SEARCH-FOUND = 1
+               PERFORM PRINT-PROFILE-SECTION
+           ELSE
+               MOVE SPACES TO WS-MESSAGE
+               STRING "No one named "
+                   FUNCTION TRIM(WS-SEARCH-NAME)
+                   " could be found."
+                   DELIMITED BY SIZE INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-IF
+
+           MOVE "Press Enter to return to the main menu." TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           PERFORM READ-INPUT-SECTION.
