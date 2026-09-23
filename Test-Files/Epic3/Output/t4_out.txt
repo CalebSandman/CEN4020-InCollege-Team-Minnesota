@@ -1,0 +1,142 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+CalebSandman
+Enter password:
+Password123!
+Welcome in, CalebSandman!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+==== Profile for Caleb Sandman
+First Name: Caleb
+Last Name: Sandman
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2027
+About Me: I LOVE video games.
+Experience:
+None provided.
+Education:
+Degree: Master of Nothing
+University: USF
+Years: 2004-2008
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+4
+Enter a full name to search for:
+Demo Omed
+==== Profile for Demo Omed
+First Name: Demo
+Last Name: Omed
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2028
+About Me: Updated profile.
+Experience:
+None provided.
+Education:
+None provided.
+--------------------
+Press Enter to return to the main menu.
+
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+4
+Enter a full name to search for:
+No Name
+No one named No Name could be found.
+Press Enter to return to the main menu.
+
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+4
+Enter a full name to search for:
+Nazmus Sakeeb
+==== Profile for Nazmus Sakeeb
+First Name: Nazmus
+Last Name: Sakeeb
+University: USF
+Major: Computer Science?
+Graduation Year: 2033
+About Me:
+Experience:
+Title: Software Intern
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Title: Software Intern 2
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description:
+Title: Software Intern 3
+Company: Tech Solutions Inc.
+Dates: 2022-2024
+Description: Desc
+Education:
+None provided.
+--------------------
+Press Enter to return to the main menu.
+
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+2
+--- Your Profile ---
+==== Profile for Caleb Sandman
+First Name: Caleb
+Last Name: Sandman
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2027
+About Me: I LOVE video games.
+Experience:
+None provided.
+Education:
+Degree: Master of Nothing
+University: USF
+Years: 2004-2008
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. Find a job/internship
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6
