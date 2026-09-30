@@ -39,6 +39,10 @@
                RECORD KEY IS PF-USERNAME
                FILE STATUS IS WS-PROFILE-STATUS.
 
+           SELECT REQUESTS-FILE ASSIGN TO "data/requests.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-REQUESTS-STATUS.
+
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
@@ -71,6 +75,11 @@
               10 PF-DEGREE      PIC X(100).
               10 PF-SCHOOL      PIC X(100).
               10 PF-YEARS       PIC X(50).
+       
+       FD  REQUESTS-FILE.
+       01  REQUESTS-RECORD.
+           05 RF-SENDER-FULLNAME       PIC X(101).
+           05 RF-RECEIVER-FULLNAME     PIC X(101).
 
        WORKING-STORAGE SECTION.
        01  WS-PROFILE-STATUS    PIC XX.
@@ -93,7 +102,7 @@
        01  WS-ACCOUNT-FILE-STATUS      PIC XX VALUE "00".
        01  WS-INPUT-FILE-STATUS        PIC XX VALUE "00".
        01  WS-OUTPUT-FILE-STATUS       PIC XX VALUE "00".
-
+       01  WS-REQUESTS-STATUS           PIC XX VALUE "00".
 
       * In-memory account table (max 5 accounts)
 
@@ -160,9 +169,24 @@
        01  WS-CURRENT-CHAR             PIC X.
 
       * Profile search fields
-       01 WS-SEARCH-NAME               PIC X(101).
-       01 WS-COMPARE-NAME              PIC X(101).
-       01 WS-SEARCH-FOUND              PIC 9 VALUE 0.
+       01  WS-SEARCH-NAME               PIC X(101).
+       01  WS-COMPARE-NAME              PIC X(101).
+       01  WS-SEARCH-FOUND              PIC 9 VALUE 0.
+      
+      * Requests
+       01  WS-TARGET-USER             PIC X(50).
+       01  WS-REQUESTS-EOF-FLAG                PIC X VALUE "N".
+           88 END-OF-REQUESTS-FILE              VALUE "Y".
+       
+       01  WS-FOUND-FLAG                PIC X VALUE "N".
+           88  REQUEST-FOUND                      VALUE "Y".
+           88  NO-REQUESTS-FOUND                  VALUE "N".
+
+       01  WS-DUPLICATE-REQUEST-FLAG     PIC X VALUE "N".
+           88  DUPLICATE-REQUEST-FOUND       VALUE "Y".
+           88  NO-DUPLICATE-REQUEST-FOUND       VALUE "N".
+       
+       01  WS-SENDING-FULL-NAME           PIC X(101).
 
        PROCEDURE DIVISION.
 
@@ -218,6 +242,24 @@
                END-PERFORM
                CLOSE ACCOUNT-FILE
            END-IF.
+
+           OPEN EXTEND REQUESTS-FILE
+           EVALUATE WS-REQUESTS-STATUS
+               WHEN "00"
+                   CLOSE REQUESTS-FILE
+               WHEN "35"
+                   CLOSE REQUESTS-FILE
+                   OPEN OUTPUT REQUESTS-FILE
+                   IF WS-REQUESTS-STATUS = "00"
+                       CLOSE REQUESTS-FILE
+                   ELSE 
+                       STOP RUN
+                   END-IF
+               WHEN OTHER
+                   MOVE "Error: requests.dat file error" TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+           END-EVALUATE.
+           
 
       * ================================================================
       * WELCOME-SECTION - login / register / exit
@@ -418,6 +460,7 @@
                    FUNCTION TRIM(WS-INPUT-USERNAME)
                    "!" DELIMITED BY SIZE INTO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
+               PERFORM GET-LOGGED-IN-FULLNAME-SECTION
            ELSE
                MOVE "Error: Incorrect username or password."
                TO WS-MESSAGE
@@ -434,7 +477,7 @@
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "2. View My Profile" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "3. Find a job/internship" TO WS-MESSAGE
+           MOVE "3. View My Pending Connection Requests" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "4. Find someone you know" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
@@ -449,9 +492,7 @@
            EVALUATE WS-MENU-CHOICE
                WHEN "1" PERFORM EDIT-PROFILE-SECTION
                WHEN "2" PERFORM VIEW-PROFILE-SECTION
-               WHEN "3"
-                   MOVE "Option is under construction" TO WS-MESSAGE
-                   PERFORM PRINT-AND-LOG-SECTION
+               WHEN "3" PERFORM VIEW-CONNECTION-REQUESTS-SECTION
                WHEN "4"
                    PERFORM FIND-USER-SECTION
                WHEN "5"
@@ -690,6 +731,9 @@
            END-IF
            MOVE "Profile saved successfully!" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
+      * update name for connection requests
+           PERFORM GET-LOGGED-IN-FULLNAME-SECTION
+
            MOVE "Returning to main menu." TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION.
 
@@ -882,7 +926,169 @@
                    DELIMITED BY SIZE INTO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
            END-IF
-
-           MOVE "Press Enter to return to the main menu." TO WS-MESSAGE
+           
+      * ask user if they would like to send a connection request
+           
+           MOVE "1. Send Connection Request" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
+           MOVE "2. Back to Main Menu" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           
+           
            PERFORM READ-INPUT-SECTION.
+           MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
+
+           EVALUATE WS-MENU-CHOICE
+               WHEN "1"
+                   PERFORM SEND-CONNECTION-REQUEST-SECTION
+               WHEN "2"
+                  PERFORM MAIN-MENU-SECTION
+               WHEN OTHER
+                     MOVE "Invalid choice! Please try again"
+                          TO WS-MESSAGE
+                     PERFORM PRINT-AND-LOG-SECTION
+           END-EVALUATE.
+      
+
+      * VIEW-CONNECTION-REQUESTS-SECTION - displays pending connections
+       VIEW-CONNECTION-REQUESTS-SECTION SECTION.
+           MOVE "---Pending Connection Requests---" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION.
+           
+           
+           OPEN INPUT REQUESTS-FILE
+           
+           IF WS-REQUESTS-STATUS NOT = "00"
+               MOVE "Error: requests.dat file error"
+                   TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STOP RUN
+           ELSE
+               MOVE "N" TO WS-EOF-FLAG
+           
+
+
+      * read all connection requests     
+           PERFORM UNTIL END-OF-REQUESTS-FILE
+               READ REQUESTS-FILE
+                   AT END
+                       SET END-OF-REQUESTS-FILE TO TRUE
+                   NOT AT END
+                       IF RF-RECEIVER-FULLNAME = WS-SENDING-FULL-NAME
+                           SET REQUEST-FOUND TO TRUE
+                           MOVE RF-SENDER-FULLNAME TO WS-TARGET-USER
+                           STRING "Connection request from "
+                               FUNCTION TRIM(WS-TARGET-USER)
+                               DELIMITED BY SIZE INTO WS-MESSAGE
+                           END-STRING
+                           PERFORM PRINT-AND-LOG-SECTION
+                       END-IF
+               END-READ
+           END-PERFORM
+           
+           CLOSE REQUESTS-FILE
+
+           IF NO-REQUESTS-FOUND
+               MOVE "No pending connection requests found."
+                   TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-IF
+           
+           MOVE "---------------------------------" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION.
+
+
+           EXIT.
+       
+      * SEND-CONNECTION-REQUEST-SECTION - sends a connection request to another user
+       SEND-CONNECTION-REQUEST-SECTION SECTION.
+           
+       PERFORM CHECK-DUPLICATE-REQUEST-SECTION
+
+       IF WS-DUPLICATE-REQUEST-FLAG = "Y"
+           MOVE "A connection request already exists with this user."
+               TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           EXIT SECTION
+       END-IF
+
+      * write a new connection request
+           OPEN EXTEND REQUESTS-FILE
+           IF WS-REQUESTS-STATUS NOT = "00"
+                MOVE "Error: requests.dat file error"
+                     TO WS-MESSAGE
+                PERFORM PRINT-AND-LOG-SECTION
+                STOP RUN
+           END-IF
+           
+           IF WS-SEARCH-NAME = WS-SENDING-FULL-NAME
+                MOVE "Cannot send a connection request to yourself"
+                   TO WS-MESSAGE
+                PERFORM PRINT-AND-LOG-SECTION
+                CLOSE REQUESTS-FILE
+                EXIT SECTION
+           END-IF
+
+           MOVE WS-SEARCH-NAME TO RF-RECEIVER-FULLNAME
+           MOVE WS-SENDING-FULL-NAME TO RF-SENDER-FULLNAME
+
+           WRITE REQUESTS-RECORD
+
+           IF WS-REQUESTS-STATUS NOT = "00"
+                MOVE "Error: requests.dat file error"
+                     TO WS-MESSAGE
+                PERFORM PRINT-AND-LOG-SECTION
+                STOP RUN
+           ELSE
+                STRING "Connection request sent to "
+                     FUNCTION TRIM(RF-RECEIVER-FULLNAME)
+                     DELIMITED BY SIZE INTO WS-MESSAGE
+                END-STRING
+                PERFORM PRINT-AND-LOG-SECTION
+           END-IF
+
+           CLOSE REQUESTS-FILE.
+
+           EXIT.
+
+       CHECK-DUPLICATE-REQUEST-SECTION SECTION.
+           MOVE "N" TO WS-DUPLICATE-REQUEST-FLAG
+           MOVE "N" TO WS-REQUESTS-EOF-FLAG
+           
+           OPEN INPUT REQUESTS-FILE
+           
+           IF WS-REQUESTS-STATUS NOT = "00"
+                MOVE "Error: requests.dat file error"
+                     TO WS-MESSAGE
+                PERFORM PRINT-AND-LOG-SECTION
+                STOP RUN
+           END-IF
+
+           PERFORM UNTIL END-OF-REQUESTS-FILE
+               READ REQUESTS-FILE
+                   AT END
+                       SET END-OF-REQUESTS-FILE TO TRUE
+                   NOT AT END
+                   IF (RF-SENDER-FULLNAME = WS-SENDING-FULL-NAME
+                      AND RF-RECEIVER-FULLNAME = WS-SEARCH-NAME)
+                      OR
+                      (RF-SENDER-FULLNAME = WS-SEARCH-NAME
+                      AND RF-RECEIVER-FULLNAME = WS-SENDING-FULL-NAME)
+                           SET DUPLICATE-REQUEST-FOUND TO TRUE
+                           SET END-OF-REQUESTS-FILE TO TRUE
+                       END-IF
+               END-READ
+           END-PERFORM
+
+           CLOSE REQUESTS-FILE.
+
+       GET-LOGGED-IN-FULLNAME-SECTION SECTION.
+           MOVE SPACES TO WS-SENDING-FULL-NAME
+           PERFORM LOAD-PROFILE-SECTION
+           IF WS-PROFILE-FOUND = 1
+               STRING FUNCTION TRIM(PF-FIRST) " "
+                   FUNCTION TRIM(PF-LAST)
+                   DELIMITED BY SIZE INTO WS-SENDING-FULL-NAME
+           ELSE
+               MOVE WS-INPUT-USERNAME TO WS-SENDING-FULL-NAME
+           END-IF.
