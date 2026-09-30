@@ -122,5 +122,3 @@ To view pending requests, select:
 `3. View My Pending Connection Requests`
 
 The program displays all pending connection requests sent to the currently logged-in user.
-
-## Viewing Pending Connection Requests
