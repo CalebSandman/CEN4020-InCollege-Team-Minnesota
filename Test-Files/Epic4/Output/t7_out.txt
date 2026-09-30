@@ -1,0 +1,45 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+CalebSandman
+Enter password:
+Password123!
+Welcome in, CalebSandman!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+4
+Enter a full name to search for:
+Demo Omed
+==== Profile for Demo Omed
+First Name: Demo
+Last Name: Omed
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2028
+About Me: Updated profile.
+Experience:
+None provided.
+Education:
+None provided.
+--------------------
+1. Send Connection Request
+2. Back to Main Menu
+2
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6

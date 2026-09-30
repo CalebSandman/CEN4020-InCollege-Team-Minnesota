@@ -1,0 +1,60 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+Epic2Demo
+Enter password:
+Strong1!
+Welcome in, Epic2Demo!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+3
+---Pending Connection Requests---
+Connection request from Caleb Sandman
+---------------------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+4
+Enter a full name to search for:
+Caleb Sandman
+==== Profile for Caleb Sandman
+First Name: Caleb
+Last Name: Sandman
+University: University of South Florida
+Major: Computer Science
+Graduation Year: 2027
+About Me: I LOVE video games.
+Experience:
+None provided.
+Education:
+Degree: Master of Nothing
+University: USF
+Years: 2004-2008
+--------------------
+1. Send Connection Request
+2. Back to Main Menu
+1
+A connection request already exists with this user.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+Enter your choice:
+6
