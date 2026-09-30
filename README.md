@@ -60,3 +60,73 @@ again after viewing.
 
 The assignment's example displays 2025, but its explicit rule is greater than
 2025 and less than 2034. The implementation follows that explicit rule.
+
+# InCollege - Epic 4
+
+Epic 4 adds connection request functionality to the existing InCollege system.
+
+Users can now:
+
+- Send a connection request to another user after finding and viewing their profile.
+- Persistently store pending connection requests.
+- View pending connection requests that were sent to them.
+
+All Epic 4 input continues to be read from `data/input.txt`, and all output is displayed on the console and written to `data/output.txt`.
+
+## Updated Main Menu
+
+After login, the main menu now includes:
+
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. Logout / Exit
+
+## Sending a Connection Request
+
+To send a connection request:
+
+1. Select `4. Find someone you know`.
+2. Enter the full name of the user to search for.
+3. If the user is found, their profile is displayed.
+4. The following options are shown:
+
+   1. Send Connection Request
+   2. Back to Main Menu
+
+5. Select `1` to send the connection request.
+
+A successful request displays a message similar to:
+
+`Connection request sent to <user name>`
+
+Pending requests are saved in:
+
+`data/requests.dat`
+
+The request record stores the sender and receiver information so the request can still be retrieved after the program is closed and reopened.
+
+## Connection Request Validation
+
+- Before saving a new request, the program checks for an existing pending request between the two users.
+- If a pending request already exists, the program displays:
+- A connection request already exists with this user.`
+- The program also prevents a user from sending a connection request to themselves.
+
+## Viewing Pending Connection Requests
+
+To view pending requests, select:
+
+`3. View My Pending Connection Requests`
+
+The program displays all pending connection requests sent to the currently logged-in user.
+
+## Viewing Pending Connection Requests
+
+To view pending requests, select:
+
+`3. View My Pending Connection Requests`
+
+The program displays all pending connection requests sent to the currently logged-in user.
