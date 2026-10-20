@@ -113,9 +113,9 @@
        01  WS-OUTPUT-FILE-STATUS       PIC XX VALUE "00".
        01  WS-REQUESTS-STATUS           PIC XX VALUE "00".
 
-      * In-memory account table (max 5 accounts)
+      * In-memory account table (max 10 accounts)
 
-       01  WS-MAX-ACCOUNTS             PIC 9 VALUE 5.
+       01  WS-MAX-ACCOUNTS             PIC 9 VALUE 10.
        01  WS-ACCOUNT-COUNT            PIC 9 VALUE 0.
        01  WS-ACCOUNTS-TABLE.
            05  WS-ACCOUNT OCCURS 5 TIMES INDEXED BY ACCT-IDX.
