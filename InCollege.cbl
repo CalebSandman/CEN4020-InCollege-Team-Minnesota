@@ -43,6 +43,10 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-REQUESTS-STATUS.
 
+           SELECT CONNECTIONS-FILE ASSIGN TO "data/connections.dat"
+               ORGANIZATION IS LINE sequential
+               FILE STATUS IS WS-CONNECTIONS-STATUS.
+
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
@@ -80,6 +84,11 @@
        01  REQUESTS-RECORD.
            05 RF-SENDER-FULLNAME       PIC X(101).
            05 RF-RECEIVER-FULLNAME     PIC X(101).
+
+       FD  CONNECTIONS-FILE.
+       01  CONNECTIONS-RECORD.
+           05 CF-USER-ONE-FULLNAME     PIC X(101).
+           05 CF-USER-TWO-FULLNAME     PIC X(101).
 
        WORKING-STORAGE SECTION.
        01  WS-PROFILE-STATUS    PIC XX.
@@ -188,6 +197,33 @@
        
        01  WS-SENDING-FULL-NAME           PIC X(101).
 
+      * Pending request table (loaded from requests.dat so requests
+      * can be removed and the file rewritten, like the accounts table)
+       01  WS-REQ-COUNT                PIC 99 VALUE 0.
+       01  WS-REQUESTS-TABLE.
+           05  WS-REQUEST OCCURS 50 TIMES
+               INDEXED BY REQ-IDX REQ-OUT-IDX.
+               10  WS-REQ-SENDER       PIC X(101).
+               10  WS-REQ-RECEIVER     PIC X(101).
+               10  WS-REQ-REMOVED-FLAG PIC X.
+                   88 REQ-REMOVED      VALUE "Y".
+
+       01  WS-DECISION-FLAG            PIC X VALUE "N".
+           88 DECISION-MADE            VALUE "Y".
+
+      * Established connections / network
+       01  WS-CONNECTIONS-STATUS       PIC XX VALUE "00".
+       01  WS-CONNECTIONS-EOF-FLAG     PIC X VALUE "N".
+           88 END-OF-CONNECTIONS-FILE  VALUE "Y".
+       01  WS-CONNECTED-NAME           PIC X(101).
+       01  WS-NETWORK-FLAG             PIC X VALUE "N".
+           88 NETWORK-HAS-CONNECTIONS  VALUE "Y".
+           88 NO-CONNECTIONS-FOUND     VALUE "N".
+       01  WS-ALREADY-CONNECTED-FLAG   PIC X VALUE "N".
+           88 ALREADY-CONNECTED        VALUE "Y".
+           88 NOT-ALREADY-CONNECTED    VALUE "N".
+       01  WS-LOOKUP-FOUND             PIC 9 VALUE 0.
+
        PROCEDURE DIVISION.
 
 
@@ -258,6 +294,30 @@
                WHEN OTHER
                    MOVE "Error: requests.dat file error" TO WS-MESSAGE
                        PERFORM PRINT-AND-LOG-SECTION
+           END-EVALUATE.
+
+           OPEN EXTEND CONNECTIONS-FILE
+           EVALUATE WS-CONNECTIONS-STATUS
+               WHEN "00"
+                   CLOSE CONNECTIONS-FILE
+               WHEN "35"
+      *            First run - file doesn't exist yet, create it empty
+                   OPEN OUTPUT CONNECTIONS-FILE
+                   IF WS-CONNECTIONS-STATUS = "00"
+                       CLOSE CONNECTIONS-FILE
+                   ELSE
+                       MOVE "Error: connections.dat file error"
+                           TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+                       PERFORM FINALIZE-SECTION
+                       STOP RUN
+                   END-IF
+               WHEN OTHER
+                   MOVE "Error: connections.dat file error"
+                       TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+                   PERFORM FINALIZE-SECTION
+                   STOP RUN
            END-EVALUATE.
            
 
@@ -483,7 +543,9 @@
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "5. Learn a new skill" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "6. Logout / Exit" TO WS-MESSAGE
+           MOVE "6. View My Network" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           MOVE "7. Logout / Exit" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "Enter your choice:" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
@@ -500,7 +562,8 @@
                        PERFORM SKILLS-MENU-SECTION
                    END-PERFORM
                    MOVE "Y" TO WS-CONTINUE-FLAG
-               WHEN "6" MOVE "N" TO WS-CONTINUE-FLAG
+               WHEN "6" PERFORM VIEW-MY-NETWORK-SECTION
+               WHEN "7" MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                        TO WS-MESSAGE
@@ -950,60 +1013,170 @@
            END-EVALUATE.
       
 
-      * VIEW-CONNECTION-REQUESTS-SECTION - displays pending connections
+      * VIEW-CONNECTION-REQUESTS-SECTION - lists pending requests for
+      * the logged-in user and prompts accept / reject for each one
        VIEW-CONNECTION-REQUESTS-SECTION SECTION.
            MOVE "---Pending Connection Requests---" TO WS-MESSAGE
-           PERFORM PRINT-AND-LOG-SECTION.
-           
-           
-           OPEN INPUT REQUESTS-FILE
-           
-           IF WS-REQUESTS-STATUS NOT = "00"
-               MOVE "Error: requests.dat file error"
-                   TO WS-MESSAGE
-               PERFORM PRINT-AND-LOG-SECTION
-               STOP RUN
-           ELSE
-               MOVE "N" TO WS-EOF-FLAG
-           
+           PERFORM PRINT-AND-LOG-SECTION
 
+           PERFORM LOAD-REQUESTS-TABLE-SECTION
 
-      * read all connection requests     
-           PERFORM UNTIL END-OF-REQUESTS-FILE
-               READ REQUESTS-FILE
-                   AT END
-                       SET END-OF-REQUESTS-FILE TO TRUE
-                   NOT AT END
-                       IF RF-RECEIVER-FULLNAME = WS-SENDING-FULL-NAME
-                           SET REQUEST-FOUND TO TRUE
-                           MOVE RF-SENDER-FULLNAME TO WS-TARGET-USER
-                           STRING "Connection request from "
-                               FUNCTION TRIM(WS-TARGET-USER)
-                               DELIMITED BY SIZE INTO WS-MESSAGE
-                           END-STRING
-                           PERFORM PRINT-AND-LOG-SECTION
-                       END-IF
-               END-READ
+           MOVE "N" TO WS-FOUND-FLAG
+           PERFORM VARYING REQ-IDX FROM 1 BY 1
+               UNTIL REQ-IDX > WS-REQ-COUNT
+               IF WS-REQ-RECEIVER(REQ-IDX) = WS-SENDING-FULL-NAME
+                   SET REQUEST-FOUND TO TRUE
+                   PERFORM PROCESS-REQUEST-SECTION
+               END-IF
            END-PERFORM
-           
-           CLOSE REQUESTS-FILE
 
            IF NO-REQUESTS-FOUND
                MOVE "No pending connection requests found."
                    TO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
            END-IF
-           
+
            MOVE "---------------------------------" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION.
 
+      * LOAD-REQUESTS-TABLE-SECTION - reads requests.dat into the table
+       LOAD-REQUESTS-TABLE-SECTION SECTION.
+           MOVE 0 TO WS-REQ-COUNT
+           MOVE "N" TO WS-REQUESTS-EOF-FLAG
+           OPEN INPUT REQUESTS-FILE
+           IF WS-REQUESTS-STATUS NOT = "00"
+               MOVE "Error: requests.dat file error" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
 
-           EXIT.
+           PERFORM UNTIL END-OF-REQUESTS-FILE
+               READ REQUESTS-FILE
+                   AT END
+                       SET END-OF-REQUESTS-FILE TO TRUE
+                   NOT AT END
+                       IF WS-REQ-COUNT < 50
+                           ADD 1 TO WS-REQ-COUNT
+                           SET REQ-IDX TO WS-REQ-COUNT
+                           MOVE RF-SENDER-FULLNAME
+                               TO WS-REQ-SENDER(REQ-IDX)
+                           MOVE RF-RECEIVER-FULLNAME
+                               TO WS-REQ-RECEIVER(REQ-IDX)
+                           MOVE "N" TO WS-REQ-REMOVED-FLAG(REQ-IDX)
+                       END-IF
+               END-READ
+           END-PERFORM
+
+           CLOSE REQUESTS-FILE.
+
+      * PROCESS-REQUEST-SECTION - handles ONE request (the one REQ-IDX
+      * points at). Re-prompts until the user enters 1 or 2.
+       PROCESS-REQUEST-SECTION SECTION.
+           MOVE SPACES TO WS-MESSAGE
+           STRING "Connection request from "
+               FUNCTION TRIM(WS-REQ-SENDER(REQ-IDX))
+               DELIMITED BY SIZE INTO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           MOVE "N" TO WS-DECISION-FLAG
+           PERFORM UNTIL DECISION-MADE
+               MOVE "1. Accept" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               MOVE "2. Reject" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               MOVE "Enter your choice:" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM READ-INPUT-SECTION
+               MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
+               EVALUATE WS-MENU-CHOICE
+                   WHEN "1"
+                       PERFORM ADD-CONNECTION-SECTION
+                       SET REQ-REMOVED(REQ-IDX) TO TRUE
+                       PERFORM REWRITE-REQUESTS-FILE-SECTION
+                       MOVE SPACES TO WS-MESSAGE
+                       STRING "Connection request from "
+                           FUNCTION TRIM(WS-REQ-SENDER(REQ-IDX))
+                           " accepted!"
+                           DELIMITED BY SIZE INTO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+                       SET DECISION-MADE TO TRUE
+                   WHEN "2"
+                       SET REQ-REMOVED(REQ-IDX) TO TRUE
+                       PERFORM REWRITE-REQUESTS-FILE-SECTION
+                       MOVE SPACES TO WS-MESSAGE
+                       STRING "Connection request from "
+                           FUNCTION TRIM(WS-REQ-SENDER(REQ-IDX))
+                           " rejected."
+                           DELIMITED BY SIZE INTO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+                       SET DECISION-MADE TO TRUE
+                   WHEN OTHER
+                       MOVE "Invalid choice! Please try again."
+                           TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+               END-EVALUATE
+           END-PERFORM.
+
+      * ADD-CONNECTION-SECTION - appends the accepted pair to
+      * connections.dat (sender first, accepting user second)
+       ADD-CONNECTION-SECTION SECTION.
+           OPEN EXTEND CONNECTIONS-FILE
+           IF WS-CONNECTIONS-STATUS NOT = "00"
+               MOVE "Error: connections.dat file error" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
+
+           MOVE WS-REQ-SENDER(REQ-IDX) TO CF-USER-ONE-FULLNAME
+           MOVE WS-REQ-RECEIVER(REQ-IDX) TO CF-USER-TWO-FULLNAME
+           WRITE CONNECTIONS-RECORD
+           IF WS-CONNECTIONS-STATUS NOT = "00"
+               MOVE "Error: connections.dat file error" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
+
+           CLOSE CONNECTIONS-FILE.
+
+      * REWRITE-REQUESTS-FILE-SECTION - rewrites requests.dat from the
+      * table, leaving out every request marked as removed
+       REWRITE-REQUESTS-FILE-SECTION SECTION.
+           OPEN OUTPUT REQUESTS-FILE
+           IF WS-REQUESTS-STATUS NOT = "00"
+               MOVE "Error: requests.dat file error" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
+
+           PERFORM VARYING REQ-OUT-IDX FROM 1 BY 1
+               UNTIL REQ-OUT-IDX > WS-REQ-COUNT
+               IF NOT REQ-REMOVED(REQ-OUT-IDX)
+                   MOVE WS-REQ-SENDER(REQ-OUT-IDX)
+                       TO RF-SENDER-FULLNAME
+                   MOVE WS-REQ-RECEIVER(REQ-OUT-IDX)
+                       TO RF-RECEIVER-FULLNAME
+                   WRITE REQUESTS-RECORD
+               END-IF
+           END-PERFORM
+
+           CLOSE REQUESTS-FILE.
        
       * SEND-CONNECTION-REQUEST-SECTION - sends a connection request to another user
        SEND-CONNECTION-REQUEST-SECTION SECTION.
            
        PERFORM CHECK-DUPLICATE-REQUEST-SECTION
+
+       PERFORM CHECK-ALREADY-CONNECTED-SECTION
+       IF ALREADY-CONNECTED
+           MOVE "You are already connected with this user."
+               TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           EXIT SECTION
+       END-IF
 
        IF WS-DUPLICATE-REQUEST-FLAG = "Y"
            MOVE "A connection request already exists with this user."
@@ -1092,3 +1265,6 @@
            ELSE
                MOVE WS-INPUT-USERNAME TO WS-SENDING-FULL-NAME
            END-IF.
+
+           COPY "ViewNetwork.cbl".
+           
