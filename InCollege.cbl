@@ -116,9 +116,9 @@
       * In-memory account table (max 10 accounts)
 
        01  WS-MAX-ACCOUNTS             PIC 99 VALUE 10.
-       01  WS-ACCOUNT-COUNT            PIC 9 VALUE 0.
+       01  WS-ACCOUNT-COUNT            PIC 99 VALUE 0.
        01  WS-ACCOUNTS-TABLE.
-           05  WS-ACCOUNT OCCURS 5 TIMES INDEXED BY ACCT-IDX.
+           05  WS-ACCOUNT OCCURS 10 TIMES INDEXED BY ACCT-IDX.
                10  WS-USERNAME         PIC X(50).
                10  WS-PASSWORD         PIC X(12).
 
