@@ -283,25 +283,31 @@
            EVALUATE WS-REQUESTS-STATUS
                WHEN "00"
                    CLOSE REQUESTS-FILE
+
                WHEN "35"
-                   CLOSE REQUESTS-FILE
                    OPEN OUTPUT REQUESTS-FILE
                    IF WS-REQUESTS-STATUS = "00"
                        CLOSE REQUESTS-FILE
-                   ELSE 
+                   ELSE
+                       MOVE "Error: requests.dat file error"
+                           TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
                        STOP RUN
                    END-IF
+
                WHEN OTHER
-                   MOVE "Error: requests.dat file error" TO WS-MESSAGE
-                       PERFORM PRINT-AND-LOG-SECTION
+                   MOVE "Error: requests.dat file error"
+                       TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+                   STOP RUN
            END-EVALUATE.
 
            OPEN EXTEND CONNECTIONS-FILE
            EVALUATE WS-CONNECTIONS-STATUS
                WHEN "00"
                    CLOSE CONNECTIONS-FILE
+
                WHEN "35"
-      *            First run - file doesn't exist yet, create it empty
                    OPEN OUTPUT CONNECTIONS-FILE
                    IF WS-CONNECTIONS-STATUS = "00"
                        CLOSE CONNECTIONS-FILE
@@ -309,14 +315,13 @@
                        MOVE "Error: connections.dat file error"
                            TO WS-MESSAGE
                        PERFORM PRINT-AND-LOG-SECTION
-                       PERFORM FINALIZE-SECTION
                        STOP RUN
                    END-IF
+
                WHEN OTHER
                    MOVE "Error: connections.dat file error"
                        TO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
-                   PERFORM FINALIZE-SECTION
                    STOP RUN
            END-EVALUATE.
            
