@@ -1199,31 +1199,38 @@
            EXIT SECTION
        END-IF
 
-       IF WS-DUPLICATE-REQUEST-FLAG = "Y"
-           MOVE "A connection request already exists with this user."
-               TO WS-MESSAGE
-           PERFORM PRINT-AND-LOG-SECTION
-           EXIT SECTION
-       END-IF
+           IF WS-DUPLICATE-REQUEST-FLAG = "Y"
+               MOVE "A connection request already exists with this user."
+                   TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               EXIT SECTION
+           END-IF
 
-      * write a new connection request
-           OPEN EXTEND REQUESTS-FILE
+           IF WS-SEARCH-NAME = WS-SENDING-FULL-NAME
+               MOVE "Cannot send a connection request to yourself"
+                   TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               EXIT SECTION
+           END-IF
+
+      * Determine whether requests.dat is empty
+           PERFORM LOAD-REQUESTS-TABLE-SECTION
+
+           IF WS-REQ-COUNT = 0
+               OPEN OUTPUT REQUESTS-FILE
+           ELSE
+               OPEN EXTEND REQUESTS-FILE
+           END-IF
+
            IF WS-REQUESTS-STATUS NOT = "00"
                MOVE SPACES TO WS-MESSAGE
-               STRING "Error: requests.dat EXTEND error, status "
+               STRING "requests open status "
                    WS-REQUESTS-STATUS
                    DELIMITED BY SIZE
                    INTO WS-MESSAGE
+               END-STRING
                PERFORM PRINT-AND-LOG-SECTION
                STOP RUN
-           END-IF
-           
-           IF WS-SEARCH-NAME = WS-SENDING-FULL-NAME
-                MOVE "Cannot send a connection request to yourself"
-                   TO WS-MESSAGE
-                PERFORM PRINT-AND-LOG-SECTION
-                CLOSE REQUESTS-FILE
-                EXIT SECTION
            END-IF
 
            MOVE WS-SEARCH-NAME TO RF-RECEIVER-FULLNAME
@@ -1233,10 +1240,11 @@
 
            IF WS-REQUESTS-STATUS NOT = "00"
                MOVE SPACES TO WS-MESSAGE
-               STRING "Error: requests.dat WRITE error, status "
+               STRING "requests write status "
                    WS-REQUESTS-STATUS
                    DELIMITED BY SIZE
                    INTO WS-MESSAGE
+               END-STRING
                PERFORM PRINT-AND-LOG-SECTION
                STOP RUN
            ELSE
@@ -1245,6 +1253,7 @@
                    FUNCTION TRIM(RF-RECEIVER-FULLNAME)
                    DELIMITED BY SIZE
                    INTO WS-MESSAGE
+               END-STRING
                PERFORM PRINT-AND-LOG-SECTION
            END-IF
 
