@@ -47,6 +47,10 @@
                ORGANIZATION IS LINE sequential
                FILE STATUS IS WS-CONNECTIONS-STATUS.
 
+           SELECT REJECTIONS-FILE ASSIGN TO "data/rejections.dat"
+               ORGANIZATION IS LINE sequential
+               FILE STATUS IS WS-REJECTIONS-STATUS.
+
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
@@ -89,6 +93,11 @@
        01  CONNECTIONS-RECORD.
            05 CF-USER-ONE-FULLNAME     PIC X(101).
            05 CF-USER-TWO-FULLNAME     PIC X(101).
+
+       FD  REJECTIONS-FILE.
+       01  REJECTIONS-RECORD.
+           05 RJ-REJECTED-FULLNAME     PIC X(101).
+           05 RJ-REJECTOR-FULLNAME     PIC X(101).
 
        WORKING-STORAGE SECTION.
        01  WS-PROFILE-STATUS    PIC XX.
@@ -224,6 +233,14 @@
            88 NOT-ALREADY-CONNECTED    VALUE "N".
        01  WS-LOOKUP-FOUND             PIC 9 VALUE 0.
 
+      * Rejected requests
+       01  WS-REJECTIONS-STATUS        PIC XX VALUE "00".
+       01  WS-REJECTIONS-EOF-FLAG      PIC X VALUE "N".
+           88 END-OF-REJECTIONS-FILE   VALUE "Y".
+       01  WS-REJECTED-FLAG            PIC X VALUE "N".
+           88 PREVIOUSLY-REJECTED      VALUE "Y".
+           88 NOT-PREVIOUSLY-REJECTED  VALUE "N".
+
        PROCEDURE DIVISION.
 
 
@@ -318,8 +335,31 @@
                    PERFORM PRINT-AND-LOG-SECTION
                    PERFORM FINALIZE-SECTION
                    STOP RUN
-           END-EVALUATE.
+           END-EVALUATE
            
+           OPEN EXTEND REJECTIONS-FILE
+           EVALUATE WS-REJECTIONS-STATUS
+               WHEN "00"
+                   CLOSE REJECTIONS-FILE
+               WHEN "35"
+      *            First run - file doesn't exist yet, create it empty
+                   OPEN OUTPUT REJECTIONS-FILE
+                   IF WS-REJECTIONS-STATUS = "00"
+                       CLOSE REJECTIONS-FILE
+                   ELSE
+                       MOVE "Error: rejections.dat file error"
+                           TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+                       PERFORM FINALIZE-SECTION
+                       STOP RUN
+                   END-IF
+               WHEN OTHER
+                   MOVE "Error: rejections.dat file error"
+                       TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+                   PERFORM FINALIZE-SECTION
+                   STOP RUN
+           END-EVALUATE.
 
       * ================================================================
       * WELCOME-SECTION - login / register / exit
@@ -1102,6 +1142,7 @@
                        PERFORM PRINT-AND-LOG-SECTION
                        SET DECISION-MADE TO TRUE
                    WHEN "2"
+                       PERFORM ADD-REJECTION-SECTION
                        SET REQ-REMOVED(REQ-IDX) TO TRUE
                        PERFORM REWRITE-REQUESTS-FILE-SECTION
                        MOVE SPACES TO WS-MESSAGE
@@ -1176,6 +1217,14 @@
                TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
            EXIT SECTION
+       END-IF
+
+       PERFORM CHECK-PREVIOUSLY-REJECTED-SECTION
+       IF PREVIOUSLY-REJECTED
+           MOVE "You are not able to send a request to this user."
+               TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           exit section
        END-IF
 
        IF WS-DUPLICATE-REQUEST-FLAG = "Y"

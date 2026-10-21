@@ -131,3 +131,56 @@
            END-PERFORM
 
            CLOSE CONNECTIONS-FILE.
+
+      * ADD-REJECTION-SECTION - records that the user at REQ-IDX (the
+      * sender) was rejected by the logged-in user (the receiver)
+       ADD-REJECTION-SECTION SECTION.
+           OPEN EXTEND REJECTIONS-FILE
+           IF WS-REJECTIONS-STATUS NOT = "00"
+               MOVE "Error: rejections.dat file error" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
+
+           MOVE WS-REQ-SENDER(REQ-IDX) TO RJ-REJECTED-FULLNAME
+           MOVE WS-REQ-RECEIVER(REQ-IDX) TO RJ-REJECTOR-FULLNAME
+           WRITE REJECTIONS-RECORD
+           IF WS-REJECTIONS-STATUS NOT = "00"
+               MOVE "Error: rejections.dat file error" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
+
+           CLOSE REJECTIONS-FILE.
+
+      * CHECK-PREVIOUSLY-REJECTED-SECTION - sets PREVIOUSLY-REJECTED if
+      * WS-SEARCH-NAME has ever rejected a request from the logged-in
+      * user. One way only: the person who did the rejecting can still
+      * send requests to the person they rejected.
+       CHECK-PREVIOUSLY-REJECTED-SECTION SECTION.
+           MOVE "N" TO WS-REJECTED-FLAG
+           MOVE "N" TO WS-REJECTIONS-EOF-FLAG
+           OPEN INPUT REJECTIONS-FILE
+           IF WS-REJECTIONS-STATUS NOT = "00"
+               MOVE "Error: rejections.dat file error" TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
+               STOP RUN
+           END-IF
+
+           PERFORM UNTIL END-OF-REJECTIONS-FILE
+               READ REJECTIONS-FILE
+                   AT END
+                       SET END-OF-REJECTIONS-FILE TO TRUE
+                   NOT AT END
+                       IF RJ-REJECTED-FULLNAME = WS-SENDING-FULL-NAME
+                          AND RJ-REJECTOR-FULLNAME = WS-SEARCH-NAME
+                           SET PREVIOUSLY-REJECTED TO TRUE
+                           SET END-OF-REJECTIONS-FILE TO TRUE
+                       END-IF
+               END-READ
+           END-PERFORM
+
+           CLOSE REJECTIONS-FILE.
