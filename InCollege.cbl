@@ -1200,7 +1200,7 @@
        END-IF
 
            IF WS-DUPLICATE-REQUEST-FLAG = "Y"
-               MOVE "A connection request already exists with this user."
+               MOVE "Connection request already exists."
                    TO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
                EXIT SECTION
