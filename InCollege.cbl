@@ -1139,24 +1139,50 @@
                END-EVALUATE
            END-PERFORM.
 
-      * ADD-CONNECTION-SECTION - appends the accepted pair to
-      * connections.dat (sender first, accepting user second)
        ADD-CONNECTION-SECTION SECTION.
-           OPEN EXTEND CONNECTIONS-FILE
+           MOVE "N" TO WS-CONNECTIONS-EOF-FLAG
+
+           OPEN INPUT CONNECTIONS-FILE
+
+           IF WS-CONNECTIONS-STATUS = "00"
+               READ CONNECTIONS-FILE
+                   AT END
+                       CLOSE CONNECTIONS-FILE
+                       OPEN OUTPUT CONNECTIONS-FILE
+                   NOT AT END
+                       CLOSE CONNECTIONS-FILE
+                       OPEN EXTEND CONNECTIONS-FILE
+               END-READ
+           ELSE
+               OPEN OUTPUT CONNECTIONS-FILE
+           END-IF
+
            IF WS-CONNECTIONS-STATUS NOT = "00"
-               MOVE "Error: connections.dat file error" TO WS-MESSAGE
+               MOVE SPACES TO WS-MESSAGE
+               STRING "connections open status "
+                   WS-CONNECTIONS-STATUS
+                   DELIMITED BY SIZE
+                   INTO WS-MESSAGE
+               END-STRING
                PERFORM PRINT-AND-LOG-SECTION
-               PERFORM FINALIZE-SECTION
                STOP RUN
            END-IF
 
-           MOVE WS-REQ-SENDER(REQ-IDX) TO CF-USER-ONE-FULLNAME
-           MOVE WS-REQ-RECEIVER(REQ-IDX) TO CF-USER-TWO-FULLNAME
+           MOVE WS-REQ-SENDER(REQ-IDX)
+               TO CF-USER-ONE-FULLNAME
+           MOVE WS-REQ-RECEIVER(REQ-IDX)
+               TO CF-USER-TWO-FULLNAME
+
            WRITE CONNECTIONS-RECORD
+
            IF WS-CONNECTIONS-STATUS NOT = "00"
-               MOVE "Error: connections.dat file error" TO WS-MESSAGE
+               MOVE SPACES TO WS-MESSAGE
+               STRING "connections write status "
+                   WS-CONNECTIONS-STATUS
+                   DELIMITED BY SIZE
+                   INTO WS-MESSAGE
+               END-STRING
                PERFORM PRINT-AND-LOG-SECTION
-               PERFORM FINALIZE-SECTION
                STOP RUN
            END-IF
 
