@@ -47,6 +47,10 @@
                ORGANIZATION IS LINE sequential
                FILE STATUS IS WS-CONNECTIONS-STATUS.
 
+           SELECT REJECTIONS-FILE ASSIGN TO "data/rejections.dat"
+               ORGANIZATION IS LINE sequential
+               FILE STATUS IS WS-REJECTIONS-STATUS.
+
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
@@ -89,6 +93,11 @@
        01  CONNECTIONS-RECORD.
            05 CF-USER-ONE-FULLNAME     PIC X(101).
            05 CF-USER-TWO-FULLNAME     PIC X(101).
+
+       FD  REJECTIONS-FILE.
+       01  REJECTIONS-RECORD.
+           05 RJ-REJECTED-FULLNAME     PIC X(101).
+           05 RJ-REJECTOR-FULLNAME     PIC X(101).
 
        WORKING-STORAGE SECTION.
        01  WS-PROFILE-STATUS    PIC XX.
@@ -224,6 +233,14 @@
            88 NOT-ALREADY-CONNECTED    VALUE "N".
        01  WS-LOOKUP-FOUND             PIC 9 VALUE 0.
 
+      * Rejected requests
+       01  WS-REJECTIONS-STATUS        PIC XX VALUE "00".
+       01  WS-REJECTIONS-EOF-FLAG      PIC X VALUE "N".
+           88 END-OF-REJECTIONS-FILE   VALUE "Y".
+       01  WS-REJECTED-FLAG            PIC X VALUE "N".
+           88 PREVIOUSLY-REJECTED      VALUE "Y".
+           88 NOT-PREVIOUSLY-REJECTED  VALUE "N".
+
        PROCEDURE DIVISION.
 
 
@@ -279,68 +296,70 @@
                CLOSE ACCOUNT-FILE
            END-IF.
 
-           OPEN INPUT REQUESTS-FILE
+           OPEN EXTEND REQUESTS-FILE
            EVALUATE WS-REQUESTS-STATUS
                WHEN "00"
                    CLOSE REQUESTS-FILE
-
                WHEN "35"
+                   CLOSE REQUESTS-FILE
                    OPEN OUTPUT REQUESTS-FILE
                    IF WS-REQUESTS-STATUS = "00"
                        CLOSE REQUESTS-FILE
-                   ELSE
-                       MOVE SPACES TO WS-MESSAGE
-                       STRING "requests create status "
-                           WS-REQUESTS-STATUS
-                           DELIMITED BY SIZE
-                           INTO WS-MESSAGE
-                       END-STRING
-                       PERFORM PRINT-AND-LOG-SECTION
+                   ELSE 
                        STOP RUN
                    END-IF
-
                WHEN OTHER
-                   MOVE SPACES TO WS-MESSAGE
-                   STRING "requests startup status "
-                       WS-REQUESTS-STATUS
-                       DELIMITED BY SIZE
-                       INTO WS-MESSAGE
-                   END-STRING
-                   PERFORM PRINT-AND-LOG-SECTION
-                   STOP RUN
+                   MOVE "Error: requests.dat file error" TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
            END-EVALUATE.
 
-           OPEN INPUT CONNECTIONS-FILE
+           OPEN EXTEND CONNECTIONS-FILE
            EVALUATE WS-CONNECTIONS-STATUS
                WHEN "00"
                    CLOSE CONNECTIONS-FILE
-
                WHEN "35"
+      *            First run - file doesn't exist yet, create it empty
                    OPEN OUTPUT CONNECTIONS-FILE
                    IF WS-CONNECTIONS-STATUS = "00"
                        CLOSE CONNECTIONS-FILE
                    ELSE
-                       MOVE SPACES TO WS-MESSAGE
-                       STRING "connections create status "
-                           WS-CONNECTIONS-STATUS
-                           DELIMITED BY SIZE
-                           INTO WS-MESSAGE
-                       END-STRING
+                       MOVE "Error: connections.dat file error"
+                           TO WS-MESSAGE
                        PERFORM PRINT-AND-LOG-SECTION
+                       PERFORM FINALIZE-SECTION
                        STOP RUN
                    END-IF
-
                WHEN OTHER
-                   MOVE SPACES TO WS-MESSAGE
-                   STRING "connections startup status "
-                       WS-CONNECTIONS-STATUS
-                       DELIMITED BY SIZE
-                       INTO WS-MESSAGE
-                   END-STRING
+                   MOVE "Error: connections.dat file error"
+                       TO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
+                   PERFORM FINALIZE-SECTION
+                   STOP RUN
+           END-EVALUATE
+           
+           OPEN EXTEND REJECTIONS-FILE
+           EVALUATE WS-REJECTIONS-STATUS
+               WHEN "00"
+                   CLOSE REJECTIONS-FILE
+               WHEN "35"
+      *            First run - file doesn't exist yet, create it empty
+                   OPEN OUTPUT REJECTIONS-FILE
+                   IF WS-REJECTIONS-STATUS = "00"
+                       CLOSE REJECTIONS-FILE
+                   ELSE
+                       MOVE "Error: rejections.dat file error"
+                           TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+                       PERFORM FINALIZE-SECTION
+                       STOP RUN
+                   END-IF
+               WHEN OTHER
+                   MOVE "Error: rejections.dat file error"
+                       TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+                   PERFORM FINALIZE-SECTION
                    STOP RUN
            END-EVALUATE.
-           
 
       * ================================================================
       * WELCOME-SECTION - login / register / exit
@@ -1123,6 +1142,7 @@
                        PERFORM PRINT-AND-LOG-SECTION
                        SET DECISION-MADE TO TRUE
                    WHEN "2"
+                       PERFORM ADD-REJECTION-SECTION
                        SET REQ-REMOVED(REQ-IDX) TO TRUE
                        PERFORM REWRITE-REQUESTS-FILE-SECTION
                        MOVE SPACES TO WS-MESSAGE
@@ -1139,50 +1159,24 @@
                END-EVALUATE
            END-PERFORM.
 
+      * ADD-CONNECTION-SECTION - appends the accepted pair to
+      * connections.dat (sender first, accepting user second)
        ADD-CONNECTION-SECTION SECTION.
-           MOVE "N" TO WS-CONNECTIONS-EOF-FLAG
-
-           OPEN INPUT CONNECTIONS-FILE
-
-           IF WS-CONNECTIONS-STATUS = "00"
-               READ CONNECTIONS-FILE
-                   AT END
-                       CLOSE CONNECTIONS-FILE
-                       OPEN OUTPUT CONNECTIONS-FILE
-                   NOT AT END
-                       CLOSE CONNECTIONS-FILE
-                       OPEN EXTEND CONNECTIONS-FILE
-               END-READ
-           ELSE
-               OPEN OUTPUT CONNECTIONS-FILE
-           END-IF
-
+           OPEN EXTEND CONNECTIONS-FILE
            IF WS-CONNECTIONS-STATUS NOT = "00"
-               MOVE SPACES TO WS-MESSAGE
-               STRING "connections open status "
-                   WS-CONNECTIONS-STATUS
-                   DELIMITED BY SIZE
-                   INTO WS-MESSAGE
-               END-STRING
+               MOVE "Error: connections.dat file error" TO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
                STOP RUN
            END-IF
 
-           MOVE WS-REQ-SENDER(REQ-IDX)
-               TO CF-USER-ONE-FULLNAME
-           MOVE WS-REQ-RECEIVER(REQ-IDX)
-               TO CF-USER-TWO-FULLNAME
-
+           MOVE WS-REQ-SENDER(REQ-IDX) TO CF-USER-ONE-FULLNAME
+           MOVE WS-REQ-RECEIVER(REQ-IDX) TO CF-USER-TWO-FULLNAME
            WRITE CONNECTIONS-RECORD
-
            IF WS-CONNECTIONS-STATUS NOT = "00"
-               MOVE SPACES TO WS-MESSAGE
-               STRING "connections write status "
-                   WS-CONNECTIONS-STATUS
-                   DELIMITED BY SIZE
-                   INTO WS-MESSAGE
-               END-STRING
+               MOVE "Error: connections.dat file error" TO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
+               PERFORM FINALIZE-SECTION
                STOP RUN
            END-IF
 
@@ -1225,38 +1219,36 @@
            EXIT SECTION
        END-IF
 
-           IF WS-DUPLICATE-REQUEST-FLAG = "Y"
-               MOVE "Connection request already exists."
-                   TO WS-MESSAGE
-               PERFORM PRINT-AND-LOG-SECTION
-               EXIT SECTION
-           END-IF
+       PERFORM CHECK-PREVIOUSLY-REJECTED-SECTION
+       IF PREVIOUSLY-REJECTED
+           MOVE "You are not able to send a request to this user."
+               TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           exit section
+       END-IF
 
-           IF WS-SEARCH-NAME = WS-SENDING-FULL-NAME
-               MOVE "Cannot send a connection request to yourself"
-                   TO WS-MESSAGE
-               PERFORM PRINT-AND-LOG-SECTION
-               EXIT SECTION
-           END-IF
+       IF WS-DUPLICATE-REQUEST-FLAG = "Y"
+           MOVE "A connection request already exists with this user."
+               TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           EXIT SECTION
+       END-IF
 
-      * Determine whether requests.dat is empty
-           PERFORM LOAD-REQUESTS-TABLE-SECTION
-
-           IF WS-REQ-COUNT = 0
-               OPEN OUTPUT REQUESTS-FILE
-           ELSE
-               OPEN EXTEND REQUESTS-FILE
-           END-IF
-
+      * write a new connection request
+           OPEN EXTEND REQUESTS-FILE
            IF WS-REQUESTS-STATUS NOT = "00"
-               MOVE SPACES TO WS-MESSAGE
-               STRING "requests open status "
-                   WS-REQUESTS-STATUS
-                   DELIMITED BY SIZE
-                   INTO WS-MESSAGE
-               END-STRING
-               PERFORM PRINT-AND-LOG-SECTION
-               STOP RUN
+                MOVE "Error: requests.dat file error"
+                     TO WS-MESSAGE
+                PERFORM PRINT-AND-LOG-SECTION
+                STOP RUN
+           END-IF
+           
+           IF WS-SEARCH-NAME = WS-SENDING-FULL-NAME
+                MOVE "Cannot send a connection request to yourself"
+                   TO WS-MESSAGE
+                PERFORM PRINT-AND-LOG-SECTION
+                CLOSE REQUESTS-FILE
+                EXIT SECTION
            END-IF
 
            MOVE WS-SEARCH-NAME TO RF-RECEIVER-FULLNAME
@@ -1265,22 +1257,16 @@
            WRITE REQUESTS-RECORD
 
            IF WS-REQUESTS-STATUS NOT = "00"
-               MOVE SPACES TO WS-MESSAGE
-               STRING "requests write status "
-                   WS-REQUESTS-STATUS
-                   DELIMITED BY SIZE
-                   INTO WS-MESSAGE
-               END-STRING
-               PERFORM PRINT-AND-LOG-SECTION
-               STOP RUN
+                MOVE "Error: requests.dat file error"
+                     TO WS-MESSAGE
+                PERFORM PRINT-AND-LOG-SECTION
+                STOP RUN
            ELSE
-               MOVE SPACES TO WS-MESSAGE
-               STRING "Connection request sent to "
-                   FUNCTION TRIM(RF-RECEIVER-FULLNAME)
-                   DELIMITED BY SIZE
-                   INTO WS-MESSAGE
-               END-STRING
-               PERFORM PRINT-AND-LOG-SECTION
+                STRING "Connection request sent to "
+                     FUNCTION TRIM(RF-RECEIVER-FULLNAME)
+                     DELIMITED BY SIZE INTO WS-MESSAGE
+                END-STRING
+                PERFORM PRINT-AND-LOG-SECTION
            END-IF
 
            CLOSE REQUESTS-FILE.
@@ -1330,4 +1316,3 @@
            END-IF.
 
            COPY "ViewNetwork.cbl".
-           
