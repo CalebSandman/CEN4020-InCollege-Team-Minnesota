@@ -296,8 +296,11 @@
                    END-IF
 
                WHEN OTHER
-                   MOVE "Error: requests.dat file error"
-                       TO WS-MESSAGE
+                   MOVE SPACES TO WS-MESSAGE
+                   STRING "Error: requests.dat startup error, status "
+                       WS-REQUESTS-STATUS
+                       DELIMITED BY SIZE
+                       INTO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
                    STOP RUN
            END-EVALUATE.
