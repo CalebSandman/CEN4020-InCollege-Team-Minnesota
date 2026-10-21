@@ -290,20 +290,22 @@
                        CLOSE REQUESTS-FILE
                    ELSE
                        MOVE SPACES TO WS-MESSAGE
-                       STRING "Error: requests.dat create error, status "
+                       STRING "requests create status "
                            WS-REQUESTS-STATUS
                            DELIMITED BY SIZE
                            INTO WS-MESSAGE
+                       END-STRING
                        PERFORM PRINT-AND-LOG-SECTION
                        STOP RUN
                    END-IF
 
                WHEN OTHER
                    MOVE SPACES TO WS-MESSAGE
-                   STRING "Error: requests.dat startup error, status "
+                   STRING "requests startup status "
                        WS-REQUESTS-STATUS
                        DELIMITED BY SIZE
                        INTO WS-MESSAGE
+                   END-STRING
                    PERFORM PRINT-AND-LOG-SECTION
                    STOP RUN
            END-EVALUATE.
@@ -319,20 +321,22 @@
                        CLOSE CONNECTIONS-FILE
                    ELSE
                        MOVE SPACES TO WS-MESSAGE
-                       STRING "Error: connections.dat create error, status "
+                       STRING "connections create status "
                            WS-CONNECTIONS-STATUS
                            DELIMITED BY SIZE
                            INTO WS-MESSAGE
+                       END-STRING
                        PERFORM PRINT-AND-LOG-SECTION
                        STOP RUN
                    END-IF
 
                WHEN OTHER
                    MOVE SPACES TO WS-MESSAGE
-                   STRING "Error: connections.dat startup error, status "
+                   STRING "connections startup status "
                        WS-CONNECTIONS-STATUS
                        DELIMITED BY SIZE
                        INTO WS-MESSAGE
+                   END-STRING
                    PERFORM PRINT-AND-LOG-SECTION
                    STOP RUN
            END-EVALUATE.
