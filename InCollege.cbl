@@ -1193,10 +1193,13 @@
       * write a new connection request
            OPEN EXTEND REQUESTS-FILE
            IF WS-REQUESTS-STATUS NOT = "00"
-                MOVE "Error: requests.dat file error"
-                     TO WS-MESSAGE
-                PERFORM PRINT-AND-LOG-SECTION
-                STOP RUN
+               MOVE SPACES TO WS-MESSAGE
+               STRING "Error: requests.dat EXTEND error, status "
+                   WS-REQUESTS-STATUS
+                   DELIMITED BY SIZE
+                   INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STOP RUN
            END-IF
            
            IF WS-SEARCH-NAME = WS-SENDING-FULL-NAME
@@ -1213,10 +1216,14 @@
            WRITE REQUESTS-RECORD
 
            IF WS-REQUESTS-STATUS NOT = "00"
-                MOVE "Error: requests.dat file error"
-                     TO WS-MESSAGE
-                PERFORM PRINT-AND-LOG-SECTION
-                STOP RUN
+               MOVE SPACES TO WS-MESSAGE
+               STRING "Error: requests.dat INPUT error, status "
+                   WS-REQUESTS-STATUS
+                   DELIMITED BY SIZE
+                   INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               STOP RUN
+           END-IF
            ELSE
                 STRING "Connection request sent to "
                      FUNCTION TRIM(RF-RECEIVER-FULLNAME)
