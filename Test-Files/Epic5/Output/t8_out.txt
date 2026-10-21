@@ -1,0 +1,90 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+bob
+Enter password:
+Strong1!
+Welcome in, bob!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. View My Network
+7. Logout / Exit
+Enter your choice:
+6
+--- Your Network ---
+You have no connections yet.
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. View My Network
+7. Logout / Exit
+Enter your choice:
+3
+---Pending Connection Requests---
+Connection request from Alice Rivera
+1. Accept
+2. Reject
+Enter your choice:
+1
+Connection request from Alice Rivera accepted!
+Connection request from Carol Patel
+1. Accept
+2. Reject
+Enter your choice:
+2
+Connection request from Carol Patel rejected.
+Connection request from Dana Jones
+1. Accept
+2. Reject
+Enter your choice:
+1
+Connection request from Dana Jones accepted!
+---------------------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. View My Network
+7. Logout / Exit
+Enter your choice:
+3
+---Pending Connection Requests---
+No pending connection requests found.
+---------------------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. View My Network
+7. Logout / Exit
+Enter your choice:
+6
+--- Your Network ---
+Connected with: Alice Rivera (University: University of South Florida, Major: Computer Science)
+Connected with: Dana Jones (University: University of South Florida, Major: Computer Science)
+--------------------
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. View My Network
+7. Logout / Exit
+Enter your choice:
+7
