@@ -279,7 +279,7 @@
                CLOSE ACCOUNT-FILE
            END-IF.
 
-           OPEN EXTEND REQUESTS-FILE
+           OPEN INPUT REQUESTS-FILE
            EVALUATE WS-REQUESTS-STATUS
                WHEN "00"
                    CLOSE REQUESTS-FILE
@@ -289,8 +289,11 @@
                    IF WS-REQUESTS-STATUS = "00"
                        CLOSE REQUESTS-FILE
                    ELSE
-                       MOVE "Error: requests.dat file error"
-                           TO WS-MESSAGE
+                       MOVE SPACES TO WS-MESSAGE
+                       STRING "Error: requests.dat create error, status "
+                           WS-REQUESTS-STATUS
+                           DELIMITED BY SIZE
+                           INTO WS-MESSAGE
                        PERFORM PRINT-AND-LOG-SECTION
                        STOP RUN
                    END-IF
@@ -305,7 +308,7 @@
                    STOP RUN
            END-EVALUATE.
 
-           OPEN EXTEND CONNECTIONS-FILE
+           OPEN INPUT CONNECTIONS-FILE
            EVALUATE WS-CONNECTIONS-STATUS
                WHEN "00"
                    CLOSE CONNECTIONS-FILE
@@ -315,15 +318,21 @@
                    IF WS-CONNECTIONS-STATUS = "00"
                        CLOSE CONNECTIONS-FILE
                    ELSE
-                       MOVE "Error: connections.dat file error"
-                           TO WS-MESSAGE
+                       MOVE SPACES TO WS-MESSAGE
+                       STRING "Error: connections.dat create error, status "
+                           WS-CONNECTIONS-STATUS
+                           DELIMITED BY SIZE
+                           INTO WS-MESSAGE
                        PERFORM PRINT-AND-LOG-SECTION
                        STOP RUN
                    END-IF
 
                WHEN OTHER
-                   MOVE "Error: connections.dat file error"
-                       TO WS-MESSAGE
+                   MOVE SPACES TO WS-MESSAGE
+                   STRING "Error: connections.dat startup error, status "
+                       WS-CONNECTIONS-STATUS
+                       DELIMITED BY SIZE
+                       INTO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
                    STOP RUN
            END-EVALUATE.
