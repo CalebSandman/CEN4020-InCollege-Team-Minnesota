@@ -1316,4 +1316,3 @@
            END-IF.
 
            COPY "ViewNetwork.cbl".
-           
