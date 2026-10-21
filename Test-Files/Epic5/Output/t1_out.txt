@@ -1,1 +1,59 @@
-
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+2
+Enter username:
+CharlieTest
+Enter password:
+Abcdef1!
+Account created!
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+CharlieTest
+Enter password:
+Abcdef1!
+Welcome in, CharlieTest!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. View My Network
+7. Logout / Exit
+Enter your choice:
+1
+--- Create/Edit Profile ---
+Enter First Name (max 50):
+Charlie
+Enter Last Name (max 50):
+Tester
+Enter University/College (max 100):
+University of Central Florida
+Enter Major (max 100):
+Information Technology
+Enter Graduation Year (2026-2033):
+2028
+Enter About Me (max 200; blank to skip):
+Epic 5 test account
+EXPERIENCE #1 - Title (max 100; DONE to finish):
+DONE
+EDUCATION #1 - Degree (max 100; DONE to finish):
+DONE
+Profile saved successfully!
+Returning to main menu.
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Learn a new skill
+6. View My Network
+7. Logout / Exit
+Enter your choice:
+7
