@@ -1217,19 +1217,19 @@
 
            IF WS-REQUESTS-STATUS NOT = "00"
                MOVE SPACES TO WS-MESSAGE
-               STRING "Error: requests.dat INPUT error, status "
+               STRING "Error: requests.dat WRITE error, status "
                    WS-REQUESTS-STATUS
                    DELIMITED BY SIZE
                    INTO WS-MESSAGE
                PERFORM PRINT-AND-LOG-SECTION
                STOP RUN
-           END-IF
            ELSE
-                STRING "Connection request sent to "
-                     FUNCTION TRIM(RF-RECEIVER-FULLNAME)
-                     DELIMITED BY SIZE INTO WS-MESSAGE
-                END-STRING
-                PERFORM PRINT-AND-LOG-SECTION
+               MOVE SPACES TO WS-MESSAGE
+               STRING "Connection request sent to "
+                   FUNCTION TRIM(RF-RECEIVER-FULLNAME)
+                   DELIMITED BY SIZE
+                   INTO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
            END-IF
 
            CLOSE REQUESTS-FILE.
