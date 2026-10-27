@@ -122,3 +122,11 @@ To view pending requests, select:
 `3. View My Pending Connection Requests`
 
 The program displays all pending connection requests sent to the currently logged-in user.
+
+## Posting a Job or Internship
+
+After login, select `5. Find a job/internship`, then
+`1. Post a Job/Internship`. Enter the job title, description, employer, and location;
+each is required. Then enter a salary, or leave that line blank to omit it.
+Fields are limited to 101 characters. Each accepted job is appended to
+`data/jobs.dat`.

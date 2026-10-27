@@ -51,6 +51,10 @@
                ORGANIZATION IS LINE sequential
                FILE STATUS IS WS-REJECTIONS-STATUS.
 
+           SELECT JOBS-FILE ASSIGN TO "data/jobs.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-JOBS-STATUS.
+
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
@@ -98,6 +102,14 @@
        01  REJECTIONS-RECORD.
            05 RJ-REJECTED-FULLNAME     PIC X(101).
            05 RJ-REJECTOR-FULLNAME     PIC X(101).
+
+       FD  JOBS-FILE.
+       01  JOBS-RECORD.
+           05 JO-JOBTITLE              PIC X(101).
+           05 JO-DESCRIPTION           PIC X(101).
+           05 JO-EMPLOYER              PIC X(101).
+           05 JO-LOCATION              PIC X(101).
+           05 JO-SALARY                PIC X(101).
 
        WORKING-STORAGE SECTION.
        01  WS-PROFILE-STATUS    PIC XX.
@@ -240,6 +252,12 @@
        01  WS-REJECTED-FLAG            PIC X VALUE "N".
            88 PREVIOUSLY-REJECTED      VALUE "Y".
            88 NOT-PREVIOUSLY-REJECTED  VALUE "N".
+
+      * Posted jobs/internships
+       01  WS-JOBS-STATUS              PIC XX VALUE "00".
+       01  WS-JOBS-OPEN                PIC 9 VALUE 0.
+       01  WS-JOBS-EOF-FLAG            PIC X VALUE "N".
+           88 END-OF-JOBS-FILE         VALUE "Y".
 
        PROCEDURE DIVISION.
 
@@ -591,21 +609,30 @@
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "Enter your choice:" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
+
            PERFORM READ-INPUT-SECTION
            MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
+
            EVALUATE WS-MENU-CHOICE
                WHEN "1" PERFORM EDIT-PROFILE-SECTION
                WHEN "2" PERFORM VIEW-PROFILE-SECTION
                WHEN "3" PERFORM VIEW-CONNECTION-REQUESTS-SECTION
                WHEN "4" PERFORM FIND-USER-SECTION
-               WHEN "5" MOVE "Under construction" TO WS-MESSAGE
-                   PERFORM PRINT-AND-LOG-SECTION
+               WHEN "5"
+                   PERFORM UNTIL NOT KEEP-RUNNING
+                       PERFORM JOB-MENU-SECTION
+                   END-PERFORM
+                   MOVE "Y" TO WS-CONTINUE-FLAG
                WHEN "6"
                    PERFORM UNTIL NOT KEEP-RUNNING
                        PERFORM SKILLS-MENU-SECTION
                    END-PERFORM
                    MOVE "Y" TO WS-CONTINUE-FLAG
-               WHEN "7" PERFORM VIEW-MY-NETWORK-SECTION
+               WHEN "7" 
+                   PERFORM UNTIL NOT KEEP-RUNNING
+                       PERFORM VIEW-MY-NETWORK-SECTION
+                   END-PERFORM
+                   MOVE "Y" TO WS-CONTINUE-FLAG
                WHEN "8" MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
@@ -660,6 +687,31 @@
                    PERFORM PRINT-AND-LOG-SECTION
            END-EVALUATE.
 
+      * JOB-MENU-SECTION
+       JOB-MENU-SECTION SECTION.
+           MOVE "1. Post a Job/Internship" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           MOVE "2. Browse Jobs/Internships" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           MOVE "3. Return" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+
+           PERFORM READ-INPUT-SECTION
+           MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
+
+           EVALUATE WS-MENU-CHOICE
+               WHEN "1"
+                   PERFORM POST-JOB-SECTION
+               WHEN "2"
+                   MOVE "Under construction" TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+               WHEN "3"
+                   MOVE "N" TO WS-CONTINUE-FLAG
+               WHEN OTHER
+                   MOVE "Invalid choice! Please try again."
+                   TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+           END-EVALUATE.
 
       * PRINT-AND-LOG-SECTION - helper paragraph used by every section
       * Displays WS-MESSAGE on screen AND writes it to the output
@@ -691,6 +743,10 @@
       * FINALIZE-SECTION - close transcript file, wrap up
 
        FINALIZE-SECTION SECTION.
+           IF WS-JOBS-OPEN = 1
+               CLOSE JOBS-FILE
+               MOVE 0 TO WS-JOBS-OPEN
+           END-IF
            IF WS-PROFILE-OPEN = 1
                CLOSE PROFILE-FILE
                MOVE 0 TO WS-PROFILE-OPEN
@@ -1319,3 +1375,5 @@
            END-IF.
 
            COPY "ViewNetwork.cbl".
+           COPY "Jobs.cbl".
+           COPY "BrowseJobs.cbl".
