@@ -581,11 +581,13 @@
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "4. Find someone you know" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "5. Learn a new skill" TO WS-MESSAGE
+           MOVE "5. Find a job/internship" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "6. View My Network" TO WS-MESSAGE
+           MOVE "6. Learn a new skill" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "7. Logout / Exit" TO WS-MESSAGE
+           MOVE "7. View My Network" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           MOVE "8. Logout / Exit" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "Enter your choice:" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
@@ -595,15 +597,16 @@
                WHEN "1" PERFORM EDIT-PROFILE-SECTION
                WHEN "2" PERFORM VIEW-PROFILE-SECTION
                WHEN "3" PERFORM VIEW-CONNECTION-REQUESTS-SECTION
-               WHEN "4"
-                   PERFORM FIND-USER-SECTION
-               WHEN "5"
+               WHEN "4" PERFORM FIND-USER-SECTION
+               WHEN "5" MOVE "Under construction" TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+               WHEN "6"
                    PERFORM UNTIL NOT KEEP-RUNNING
                        PERFORM SKILLS-MENU-SECTION
                    END-PERFORM
                    MOVE "Y" TO WS-CONTINUE-FLAG
-               WHEN "6" PERFORM VIEW-MY-NETWORK-SECTION
-               WHEN "7" MOVE "N" TO WS-CONTINUE-FLAG
+               WHEN "7" PERFORM VIEW-MY-NETWORK-SECTION
+               WHEN "8" MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                        TO WS-MESSAGE
