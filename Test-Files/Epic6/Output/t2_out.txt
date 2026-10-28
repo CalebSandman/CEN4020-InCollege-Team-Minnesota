@@ -1,0 +1,105 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+sman39
+Enter password:
+PassWord2!
+Welcome in, sman39!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Find a job/internship
+6. Learn a new skill
+7. View My Network
+8. Logout / Exit
+Enter your choice:
+5
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Return
+3
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Find a job/internship
+6. Learn a new skill
+7. View My Network
+8. Logout / Exit
+Enter your choice:
+5
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Return
+3
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Find a job/internship
+6. Learn a new skill
+7. View My Network
+8. Logout / Exit
+Enter your choice:
+5
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Return
+2
+Under construction
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Return
+1
+--- Post a New Job/Internship ---
+Enter Job Title:
+
+This field is required. Try again.
+Enter Job Title:
+
+This field is required. Try again.
+Enter Job Title:
+required
+Enter Job Description:
+
+This field is required. Try again.
+Enter Job Description:
+
+This field is required. Try again.
+Enter Job Description:
+required
+Enter Employer:
+
+This field is required. Try again.
+Enter Employer:
+required
+Enter Location:
+
+This field is required. Try again.
+Enter Location:
+required
+Enter Salary (optional):
+
+Job posted successfully.
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. Return
+3
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Find a job/internship
+6. Learn a new skill
+7. View My Network
+8. Logout / Exit
+Enter your choice:
+8
