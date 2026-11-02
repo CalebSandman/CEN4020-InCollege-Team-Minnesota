@@ -184,3 +184,4 @@
            END-PERFORM
 
            CLOSE REJECTIONS-FILE.
+           
