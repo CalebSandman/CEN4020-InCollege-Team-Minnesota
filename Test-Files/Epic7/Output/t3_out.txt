@@ -1,0 +1,205 @@
+Welcome to InCollege!
+1. Login
+2. Register
+3. Exit
+1
+Enter username:
+lshaw34
+Enter password:
+Password1!
+Welcome in, lshaw34!
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Find a job/internship
+6. Learn a new skill
+7. View My Network
+8. Logout / Exit
+Enter your choice:
+5
+--- Job Search/Internship Menu ---
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. View My Applications
+4. Back to Main Menu
+Enter your choice:
+2
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+1
+--- Job Details ---
+Title: Honeywell Engineer
+Description: Builds stuff like bombs
+Employer: Honeywell
+Location: Tampa, FL
+Salary: $1,000,000
+1. Apply for this Job
+2. Back to Job List
+Enter your choice:
+1
+Your application for Honeywell Engineer at Honeywell has been submitted.
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+1
+--- Job Details ---
+Title: Honeywell Engineer
+Description: Builds stuff like bombs
+Employer: Honeywell
+Location: Tampa, FL
+Salary: $1,000,000
+1. Apply for this Job
+2. Back to Job List
+Enter your choice:
+1
+You have already applied for this job.
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+2
+--- Job Details ---
+Title: NASA Engineer
+Description: Goes to space
+Employer: NASA
+Location: Austin, TX
+1. Apply for this Job
+2. Back to Job List
+Enter your choice:
+1
+Your application for NASA Engineer at NASA has been submitted.
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+3
+--- Job Details ---
+Title: USF Professor
+Description: Teaches software engineering
+Employer: USF
+Location: Temple Terrace, FL
+Salary: $69,000
+1. Apply for this Job
+2. Back to Job List
+Enter your choice:
+1
+Your application for USF Professor at USF has been submitted.
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+1
+--- Job Details ---
+Title: Honeywell Engineer
+Description: Builds stuff like bombs
+Employer: Honeywell
+Location: Tampa, FL
+Salary: $1,000,000
+1. Apply for this Job
+2. Back to Job List
+Enter your choice:
+1
+You have already applied for this job.
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+2
+--- Job Details ---
+Title: NASA Engineer
+Description: Goes to space
+Employer: NASA
+Location: Austin, TX
+1. Apply for this Job
+2. Back to Job List
+Enter your choice:
+1
+You have already applied for this job.
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+3
+--- Job Details ---
+Title: USF Professor
+Description: Teaches software engineering
+Employer: USF
+Location: Temple Terrace, FL
+Salary: $69,000
+1. Apply for this Job
+2. Back to Job List
+Enter your choice:
+1
+You have already applied for this job.
+--- Available Job Listings ---
+1. Honeywell Engineer at Honeywell (Tampa, FL)
+2. NASA Engineer at NASA (Austin, TX)
+3. USF Professor at USF (Temple Terrace, FL)
+Enter job number, or 0 to return to Main Menu:
+0
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Find a job/internship
+6. Learn a new skill
+7. View My Network
+8. Logout / Exit
+Enter your choice:
+5
+--- Job Search/Internship Menu ---
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. View My Applications
+4. Back to Main Menu
+Enter your choice:
+3
+--- Your Job Applications ---
+Application Summary for lshaw34
+Job ID: 1
+Job Title: Honeywell Engineer
+Employer: Honeywell
+Location: Tampa, FL
+---
+Job ID: 2
+Job Title: NASA Engineer
+Employer: NASA
+Location: Austin, TX
+---
+Job ID: 3
+Job Title: USF Professor
+Employer: USF
+Location: Temple Terrace, FL
+---
+Total Applications: 3
+--- Job Search/Internship Menu ---
+1. Post a Job/Internship
+2. Browse Jobs/Internships
+3. View My Applications
+4. Back to Main Menu
+Enter your choice:
+4
+Main Menu:
+1. Create/Edit My Profile
+2. View My Profile
+3. View My Pending Connection Requests
+4. Find someone you know
+5. Find a job/internship
+6. Learn a new skill
+7. View My Network
+8. Logout / Exit
+Enter your choice:
+8
