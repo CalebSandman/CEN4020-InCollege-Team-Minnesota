@@ -55,6 +55,11 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-JOBS-STATUS.
 
+           SELECT APPLICATIONS-FILE
+               ASSIGN TO "data/applications.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-APPLICATIONS-STATUS.
+
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
@@ -111,7 +116,32 @@
            05 JO-LOCATION              PIC X(101).
            05 JO-SALARY                PIC X(101).
 
+       FD  APPLICATIONS-FILE.
+       01  APPLICATIONS-RECORD.
+           05 AP-USERNAME             PIC X(50).
+           05 AP-JOB-ID               PIC 9(9).
+           05 AP-TITLE                PIC X(101).
+           05 AP-EMPLOYER             PIC X(101).
+           05 AP-LOCATION             PIC X(101).
+
        WORKING-STORAGE SECTION.
+       01  WS-APPLICATIONS-STATUS     PIC XX.
+       01  WS-APPLICATIONS-OPEN       PIC 9 VALUE 0.
+       01  WS-APPLICATIONS-EOF        PIC 9.
+       01  WS-ALREADY-APPLIED         PIC 9.
+       01  WS-APPLICATION-COUNT       PIC 9(9).
+       01  WS-JOB-COUNT               PIC 9(9).
+       01  WS-SELECTED-JOB            PIC 9(9).
+       01  WS-NUMBER-TEXT             PIC Z(8)9.
+       01  WS-BROWSE-DONE             PIC 9.
+       01  WS-DETAIL-DONE             PIC 9.
+       01  WS-SELECTED-RECORD.
+           05 WS-SELECTED-TITLE       PIC X(101).
+           05 WS-SELECTED-DESCRIPTION PIC X(101).
+           05 WS-SELECTED-EMPLOYER    PIC X(101).
+           05 WS-SELECTED-LOCATION    PIC X(101).
+           05 WS-SELECTED-SALARY      PIC X(101).
+
        01  WS-PROFILE-STATUS    PIC XX.
        01  WS-PROFILE-OPEN      PIC 9 VALUE 0.
        01  WS-PROFILE-FOUND     PIC 9 VALUE 0.
@@ -628,11 +658,8 @@
                        PERFORM SKILLS-MENU-SECTION
                    END-PERFORM
                    MOVE "Y" TO WS-CONTINUE-FLAG
-               WHEN "7" 
-                   PERFORM UNTIL NOT KEEP-RUNNING
-                       PERFORM VIEW-MY-NETWORK-SECTION
-                   END-PERFORM
-                   MOVE "Y" TO WS-CONTINUE-FLAG
+               WHEN "7"
+                   PERFORM VIEW-MY-NETWORK-SECTION
                WHEN "8" MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
@@ -689,27 +716,27 @@
 
       * JOB-MENU-SECTION
        JOB-MENU-SECTION SECTION.
+           MOVE "--- Job Search/Internship Menu ---" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
            MOVE "1. Post a Job/Internship" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "2. Browse Jobs/Internships" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "3. Return" TO WS-MESSAGE
+           MOVE "3. View My Applications" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-
+           MOVE "4. Back to Main Menu" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           MOVE "Enter your choice:" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
            PERFORM READ-INPUT-SECTION
-           MOVE WS-INPUT-LINE TO WS-MENU-CHOICE
-
-           EVALUATE WS-MENU-CHOICE
-               WHEN "1"
-                   PERFORM POST-JOB-SECTION
-               WHEN "2"
-                   MOVE "Under construction" TO WS-MESSAGE
-                   PERFORM PRINT-AND-LOG-SECTION
-               WHEN "3"
-                   MOVE "N" TO WS-CONTINUE-FLAG
+           EVALUATE FUNCTION TRIM(WS-INPUT-LINE)
+               WHEN "1" PERFORM POST-JOB-SECTION
+               WHEN "2" PERFORM BROWSE-JOBS-SECTION
+               WHEN "3" PERFORM VIEW-APPLICATIONS-SECTION
+               WHEN "4" MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
-                   TO WS-MESSAGE
+                       TO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
            END-EVALUATE.
 
@@ -743,6 +770,10 @@
       * FINALIZE-SECTION - close transcript file, wrap up
 
        FINALIZE-SECTION SECTION.
+           IF WS-APPLICATIONS-OPEN = 1
+               CLOSE APPLICATIONS-FILE
+               MOVE 0 TO WS-APPLICATIONS-OPEN
+           END-IF
            IF WS-JOBS-OPEN = 1
                CLOSE JOBS-FILE
                MOVE 0 TO WS-JOBS-OPEN
@@ -1377,3 +1408,5 @@
            COPY "ViewNetwork.cbl".
            COPY "Jobs.cbl".
            COPY "BrowseJobs.cbl".
+           COPY "ApplyJob.cbl".
+           COPY "ViewApplications.cbl".
