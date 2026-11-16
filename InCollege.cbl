@@ -685,9 +685,9 @@
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "7. View My Network" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "8. Logout / Exit" TO WS-MESSAGE
+           MOVE "8. Messages" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "9. Messages" TO WS-MESSAGE
+           MOVE "9. Logout / Exit" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "Enter your choice:" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
@@ -713,9 +713,9 @@
                WHEN "7"
                    PERFORM VIEW-MY-NETWORK-SECTION
                WHEN "8"
-                   MOVE "N" TO WS-CONTINUE-FLAG
-               WHEN "9"
                    PERFORM MESSAGE-MENU-SECTION
+               WHEN "9"
+                   MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                        TO WS-MESSAGE
