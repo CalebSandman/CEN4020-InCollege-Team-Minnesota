@@ -60,6 +60,11 @@
                ORGANIZATION IS LINE SEQUENTIAL
                FILE STATUS IS WS-APPLICATIONS-STATUS.
 
+           SELECT MESSAGES-FILE
+               ASSIGN TO "data/messages.dat"
+               ORGANIZATION IS LINE SEQUENTIAL
+               FILE STATUS IS WS-MESSAGES-STATUS.
+
        DATA DIVISION.
        FILE SECTION.
        FD  ACCOUNT-FILE.
@@ -123,6 +128,13 @@
            05 AP-TITLE                PIC X(101).
            05 AP-EMPLOYER             PIC X(101).
            05 AP-LOCATION             PIC X(101).
+
+       FD  MESSAGES-FILE.
+       01  MESSAGES-RECORD.
+           05 MF-SENDER-USERNAME       PIC X(50).
+           05 MF-RECIPIENT-USERNAME    PIC X(50).
+           05 MF-MESSAGE-CONTENT       PIC X(200).
+           05 MF-TIMESTAMP             PIC X(21).
 
        WORKING-STORAGE SECTION.
        01  WS-APPLICATIONS-STATUS     PIC XX.
@@ -275,6 +287,19 @@
            88 NOT-ALREADY-CONNECTED    VALUE "N".
        01  WS-LOOKUP-FOUND             PIC 9 VALUE 0.
 
+      * Messaging
+       01  WS-MESSAGES-STATUS           PIC XX VALUE "00".
+       01  WS-MESSAGE-RECIPIENT         PIC X(50).
+       01  WS-MESSAGE-CONTENT           PIC X(200).
+       01  WS-RECIPIENT-FULL-NAME       PIC X(101).
+
+       01  WS-MESSAGE-RECIPIENT-FLAG    PIC X VALUE "N".
+           88 MESSAGE-RECIPIENT-FOUND   VALUE "Y".
+           88 MESSAGE-RECIPIENT-MISSING VALUE "N".
+
+       01  WS-MESSAGE-MENU-FLAG         PIC X VALUE "N".
+           88 MESSAGE-MENU-DONE         VALUE "Y".
+
       * Rejected requests
        01  WS-REJECTIONS-STATUS        PIC XX VALUE "00".
        01  WS-REJECTIONS-EOF-FLAG      PIC X VALUE "N".
@@ -403,6 +428,31 @@
                    END-IF
                WHEN OTHER
                    MOVE "Error: rejections.dat file error"
+                       TO WS-MESSAGE
+                   PERFORM PRINT-AND-LOG-SECTION
+                   PERFORM FINALIZE-SECTION
+                   STOP RUN
+           END-EVALUATE.
+
+           OPEN EXTEND MESSAGES-FILE
+           EVALUATE WS-MESSAGES-STATUS
+               WHEN "00"
+                   CLOSE MESSAGES-FILE
+
+               WHEN "35"
+                   OPEN OUTPUT MESSAGES-FILE
+                   IF WS-MESSAGES-STATUS = "00"
+                       CLOSE MESSAGES-FILE
+                   ELSE
+                       MOVE "Error: messages.dat file error"
+                           TO WS-MESSAGE
+                       PERFORM PRINT-AND-LOG-SECTION
+                       PERFORM FINALIZE-SECTION
+                       STOP RUN
+                   END-IF
+
+               WHEN OTHER
+                   MOVE "Error: messages.dat file error"
                        TO WS-MESSAGE
                    PERFORM PRINT-AND-LOG-SECTION
                    PERFORM FINALIZE-SECTION
@@ -635,7 +685,9 @@
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "7. View My Network" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
-           MOVE "8. Logout / Exit" TO WS-MESSAGE
+           MOVE "8. Messages" TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION
+           MOVE "9. Logout / Exit" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
            MOVE "Enter your choice:" TO WS-MESSAGE
            PERFORM PRINT-AND-LOG-SECTION
@@ -660,7 +712,10 @@
                    MOVE "Y" TO WS-CONTINUE-FLAG
                WHEN "7"
                    PERFORM VIEW-MY-NETWORK-SECTION
-               WHEN "8" MOVE "N" TO WS-CONTINUE-FLAG
+               WHEN "8"
+                   PERFORM MESSAGE-MENU-SECTION
+               WHEN "9"
+                   MOVE "N" TO WS-CONTINUE-FLAG
                WHEN OTHER
                    MOVE "Invalid choice! Please try again."
                        TO WS-MESSAGE
@@ -1410,3 +1465,4 @@
            COPY "BrowseJobs.cbl".
            COPY "ApplyJob.cbl".
            COPY "ViewApplications.cbl".
+           COPY "SendMessage.cbl".
