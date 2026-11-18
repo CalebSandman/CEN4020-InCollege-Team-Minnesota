@@ -29,9 +29,7 @@
                        PERFORM SEND-NEW-MESSAGE-SECTION
 
                    WHEN "2"
-                       MOVE "View My Messages is under construction."
-                           TO WS-MESSAGE
-                       PERFORM PRINT-AND-LOG-SECTION
+                       PERFORM VIEW-MESSAGES-SECTION
 
                    WHEN "3"
                        SET MESSAGE-MENU-DONE TO TRUE
@@ -150,3 +148,73 @@
            END-STRING
 
            PERFORM PRINT-AND-LOG-SECTION.
+       
+       VIEW-MESSAGES-SECTION SECTION.
+           MOVE "--- Your Messages ---"
+               TO WS-MESSAGE
+           PERFORM PRINT-AND-LOG-SECTION.
+
+           OPEN INPUT MESSAGES-FILE
+
+           IF WS-MESSAGES-STATUS NOT = "00"
+               MOVE "You have no messages at this time."
+                   TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+               EXIT SECTION
+           END-IF
+
+           MOVE "N" TO WS-MESSAGES-EOF-FLAG
+           MOVE 0 TO WS-MESSAGES-COUNT
+
+           PERFORM UNTIL WS-MESSAGES-EOF
+               READ MESSAGES-FILE NEXT
+                   AT END
+                       MOVE "Y" TO WS-MESSAGES-EOF-FLAG
+                   NOT AT END
+                       IF FUNCTION TRIM(MF-RECIPIENT-USERNAME)
+                       = FUNCTION TRIM(WS-INPUT-USERNAME)
+                       ADD 1 TO WS-MESSAGES-COUNT
+                       
+                       IF WS-MESSAGES-COUNT > 1
+                           MOVE "---" TO WS-MESSAGE
+                           PERFORM PRINT-AND-LOG-SECTION
+                       END-IF
+
+                       MOVE SPACES TO WS-MESSAGE
+                       STRING "From: "
+                           FUNCTION TRIM(MF-SENDER-USERNAME)
+                           DELIMITED BY SIZE
+                           INTO WS-MESSAGE
+                       END-STRING
+                       PERFORM PRINT-AND-LOG-SECTION
+
+                       MOVE SPACES TO WS-MESSAGE
+                       STRING "Message: "
+                           FUNCTION TRIM(MF-MESSAGE-CONTENT)
+                           DELIMITED BY SIZE
+                           INTO WS-MESSAGE
+                       END-STRING
+                       PERFORM PRINT-AND-LOG-SECTION
+
+                       MOVE SPACES TO WS-MESSAGE
+                       STRING "(Sent: "
+                           MF-TIMESTAMP(1:4) "-"
+                           MF-TIMESTAMP(5:2) "-"
+                           MF-TIMESTAMP(7:2) " "
+                           MF-TIMESTAMP(9:2) ":"
+                           MF-TIMESTAMP(11:2) ")"
+                           DELIMITED BY SIZE
+                           INTO WS-MESSAGE
+                       END-STRING
+                       PERFORM PRINT-AND-LOG-SECTION
+                   END-IF
+              END-READ
+           END-PERFORM
+
+           CLOSE MESSAGES-FILE
+
+           IF WS-MESSAGES-COUNT = 0
+               MOVE "You have no messages."
+                   TO WS-MESSAGE
+               PERFORM PRINT-AND-LOG-SECTION
+           END-IF.
