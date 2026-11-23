@@ -303,7 +303,7 @@
        01  WS-VIEW-MSG-VARS.
            05 WS-MESSAGES-EOF-FLAG                 PIC X VALUE "N".
                88 WS-MESSAGES-EOF      VALUE "Y".
-           05 WS-MESSAGES-COUNT                       PIC 9(3) VALUE 0.
+           05 WS-MESSAGES-COUNT                       PIC 9(18) VALUE 0.
 
 
       * Rejected requests
