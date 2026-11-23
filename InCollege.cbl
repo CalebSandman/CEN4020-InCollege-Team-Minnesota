@@ -299,6 +299,12 @@
 
        01  WS-MESSAGE-MENU-FLAG         PIC X VALUE "N".
            88 MESSAGE-MENU-DONE         VALUE "Y".
+       
+       01  WS-VIEW-MSG-VARS.
+           05 WS-MESSAGES-EOF-FLAG                 PIC X VALUE "N".
+               88 WS-MESSAGES-EOF      VALUE "Y".
+           05 WS-MESSAGES-COUNT                       PIC 9(18) VALUE 0.
+
 
       * Rejected requests
        01  WS-REJECTIONS-STATUS        PIC XX VALUE "00".
